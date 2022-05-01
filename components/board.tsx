@@ -1,32 +1,61 @@
-import { Paper } from "@mui/material";
+import { Box, Paper, useMediaQuery, useTheme } from "@mui/material";
+import { useState } from "react";
 import { Hand, HandState } from "../lib/hand";
 import { Seat } from "../lib/seat";
-import { Bidding } from "./bidding";
+import { BidBox } from "./bidBox";
+import { BiddingCard } from "./biddingCard";
+import { Controls } from "./controls";
 import { Holding } from "./holding";
+import { Play } from "./playCard";
 import { Trick } from "./trick";
 
 export interface BoardProps {
     hand?: Hand,
+    readOnly?: boolean,
 }
 
 export function Board({ hand }: BoardProps) {
-    return (
-        <Paper sx={{ backgroundColor: "#378B05", width: "min(100vw, 900px);", height: "min(100vw, 900px);", position: "relative" }}>
-            {hand ? <Contents hand={hand} /> : <div />}
-        </Paper>
-    );
-}
+    const [position, setPosition] = useState(0);
+    const readOnly = position !== 0;
 
-function Contents({ hand }: { hand: Hand }) {
-    const state = hand.state;
+    const theme = useTheme();
+    const columns = useMediaQuery(theme.breakpoints.up('lg'));
+
+    if (!hand) {
+        return <div>Loading...</div>
+    }
+
+    const handAt = hand.atPosition(position);
+
+    const bidding = <BiddingCard hand={hand} position={position} />;
+    const play = hand.isBidding ? <div /> : <Play hand={hand} position={position} />;
+    const controls = <Controls hand={hand} position={position} setPosition={setPosition} />;
     return (
-        <>
-            <Holding seat={Seat.North} cards={hand.north} />
-            <Holding seat={Seat.West} cards={hand.south} />
-            <Holding seat={Seat.East} cards={hand.east} />
-            <Holding seat={Seat.South} cards={hand.west} />
-            {hand.state === HandState.Bidding && <Bidding hand={hand} />}
-            {hand.state === HandState.Playing && <Trick hand={hand} />}
-        </>
+        <div>
+            <Box sx={{ display: "flex", gap: 2, my: 2, justifyContent: "center", alignItems: "flex-start" }}>
+                <Paper sx={{ backgroundColor: "#378B05", width: "min(100vw, 900px);", height: "min(100vw, 900px);", position: "relative" }}>
+                    <Holding seat={Seat.North} cards={handAt.north} />
+                    <Holding seat={Seat.West} cards={handAt.west} />
+                    <Holding seat={Seat.East} cards={handAt.east} />
+                    <Holding seat={Seat.South} cards={handAt.south} />
+                    {!readOnly && handAt.state === HandState.Bidding && <BidBox hand={handAt} />}
+                    {handAt.state === HandState.Playing && <Trick hand={handAt} />}
+                </Paper>
+                {columns && (
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        {controls}
+                        {bidding}
+                        {play}
+                    </Box>
+                )}
+            </Box>
+            {!columns && (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "min(100vw, 900px);" }}>
+                    {controls}
+                    {bidding}
+                    {play}
+                </Box>
+            )}
+        </div>
     );
-}
+} 
