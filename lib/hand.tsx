@@ -35,6 +35,7 @@ export class Hand {
     }
 
     get south() {
+        console.log("south", this.getHolding(Seat.South));
         return this.getHolding(Seat.South);
     }
 

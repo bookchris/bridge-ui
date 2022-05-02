@@ -12,11 +12,14 @@ export interface PlayProps {
 export function Play({ hand, position }: PlayProps) {
     const highlighted = hand.data.play.length - position;
     const tricks = [...hand.tricks];
-    if (hand.tricks.length === 0) {
-        tricks.push(new Trick(hand.openingLeader!, [], hand.bidding.suit!));
-    } else if (hand.tricks[hand.tricks.length - 1].complete) {
-        const last = hand.tricks[hand.tricks.length - 1]
-        tricks.push(new Trick(last.winningSeat!, [], hand.bidding.suit!));
+
+    if (hand.isPlaying) {
+        if (hand.tricks.length === 0) {
+            tricks.push(new Trick(hand.openingLeader!, [], hand.bidding.suit!));
+        } else if (hand.tricks[hand.tricks.length - 1].complete) {
+            const last = hand.tricks[hand.tricks.length - 1]
+            tricks.push(new Trick(last.winningSeat!, [], hand.bidding.suit!));
+        }
     }
 
     return (
@@ -24,13 +27,13 @@ export function Play({ hand, position }: PlayProps) {
             <Paper square elevation={0} sx={{ backgroundColor: "secondary.main" }}>
                 <Typography sx={{ p: 1, color: "white" }}>Play</Typography>
             </Paper>
-            <Table size="small" sx={{ width: "100%", display: "inline-block" }}>
+            <Table size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell>West</TableCell>
-                        <TableCell>North</TableCell>
-                        <TableCell>East</TableCell>
-                        <TableCell>South</TableCell>
+                        <TableCell align="center">West</TableCell>
+                        <TableCell align="center">North</TableCell>
+                        <TableCell align="center">East</TableCell>
+                        <TableCell align="center">South</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

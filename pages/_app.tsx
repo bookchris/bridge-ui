@@ -4,6 +4,7 @@ import { theme } from '../components/theme'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <ThemeProvider theme={theme}>
+    <title>Bridge</title>
     <CssBaseline />
     <AppBar
       position="absolute"
@@ -16,12 +17,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         </Typography>
         <Box sx={{ display: "flex", ml: 10, gap: 2 }}>
           <Button color="inherit" href="/">Play</Button>
-          <Button color="inherit" href="/analysis">Analysis</Button>
+          <Button color="inherit" href="/analysis">Analyse</Button>
         </Box>
       </Toolbar>
     </AppBar>
     <Toolbar />
-    <Component {...pageProps} />
+    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+      <Component {...pageProps} />
+    </Box>
   </ThemeProvider>
 }
 
