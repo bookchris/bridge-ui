@@ -2,6 +2,7 @@ import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } f
 import { ReactNode } from "react";
 import { Hand } from "../lib/hand";
 import { nextSeat, Seat } from "../lib/seat";
+import { BidText } from "./bidText";
 import { TableRowGrouper } from "./tableRowGrouper";
 
 export interface BiddingProps {
@@ -22,7 +23,14 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
         bids.push(<TableCell key={"empty" + pos} />);
     }
     hand.bidding.bids.forEach((bid, i) => {
-        bids.push(<TableCell key={"bid" + i} align="center" sx={{ backgroundColor: i === highlighted ? "grey.300" : undefined }}>{bid.bid}</TableCell>);
+        bids.push(
+            <TableCell
+                key={"bid" + i}
+                align="center"
+                sx={{ backgroundColor: i === highlighted ? "grey.300" : undefined }}>
+                <BidText bid={bid} />
+            </TableCell>
+        );
     });
     if (hand.isBidding) {
         bids.push(<TableCell key="next" sx={{ backgroundColor: position === 0 ? "grey.300" : undefined }}>&nbsp;</TableCell>)

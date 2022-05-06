@@ -3,8 +3,8 @@ import { useTable } from "../lib/table";
 import { Board } from "./board";
 
 const tableId = 'NYHC3TLyjxRso2RkBHtZ';
-const TableContext = createContext("");
-export const useTableId = () => useContext(TableContext);
+const BoardContext = createContext("");
+export const useTableId = () => useContext(BoardContext);
 
 export function Table() {
     const [hand, loading, error] = useTable(tableId);
@@ -14,8 +14,8 @@ export function Table() {
     }
 
     return (
-        <TableContext.Provider value={tableId}>
+        <BoardContext.Provider value={tableId}>
             <Board hand={hand} />
-        </TableContext.Provider>
+        </BoardContext.Provider>
     );
 }

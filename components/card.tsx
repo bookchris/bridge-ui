@@ -1,4 +1,5 @@
 import { Paper, PaperProps, styled } from "@mui/material";
+import { useBoardContext } from "./board";
 
 const IMAGES = [
     "https://upload.wikimedia.org/wikipedia/commons/6/67/Cards-Reverse.svg",
@@ -56,8 +57,15 @@ const IMAGES = [
     "https://upload.wikimedia.org/wikipedia/commons/9/9d/Cards-A-Spade.svg",
 ]
 
-const WIDTH = "min(15vw, 120px)"
-const HEIGHT = "min(21vw, 168px)";
+export const useCardSize = () => {
+    const { width } = useBoardContext();
+    return {
+        width: width / 7.5,
+        height: width / 5.36,
+    }
+}
+//const WIDTH = "min(15vmin, 120px)" 
+//const HEIGHT = "min(21vmin, 168px)"; 
 
 export enum Orientation {
     None = 0,
@@ -75,10 +83,11 @@ const CardImage = styled('img')({
 });
 
 export function Card2({ card, orientation = Orientation.None, ...paperProps }: CardProps) {
+    const { width, height } = useCardSize();
     const paperSxProps = {
-        [Orientation.None]: { width: WIDTH, height: HEIGHT },
-        [Orientation.Left]: { width: HEIGHT, height: WIDTH },
-        [Orientation.Right]: { width: HEIGHT, height: WIDTH },
+        [Orientation.None]: { width: width, height: height },
+        [Orientation.Left]: { width: height, height: width },
+        [Orientation.Right]: { width: height, height: width },
     }
     const imageSxProps = {
         [Orientation.None]: {},
@@ -87,7 +96,7 @@ export function Card2({ card, orientation = Orientation.None, ...paperProps }: C
     }
     return (
         <Paper {...paperProps} sx={{ display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "white", boxShadow: 1, ...paperSxProps[orientation], ...paperProps?.sx }}>
-            <CardImage src={IMAGES[card + 1]} sx={{ width: WIDTH, height: HEIGHT, ...imageSxProps[orientation] }} />
+            <CardImage src={IMAGES[card + 1]} sx={{ width: width, height: height, ...imageSxProps[orientation] }} />
         </Paper >
     )
 }

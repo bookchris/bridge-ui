@@ -1,5 +1,5 @@
 import { Box, Icon, IconButton, Paper, Tooltip, Typography } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { Hand } from "../lib/hand";
 import { useRedeal } from "../lib/table";
 
@@ -11,6 +11,26 @@ export interface ControlsProps {
 
 export function Controls({ hand, position, setPosition }: ControlsProps) {
     const redeal = useRedeal();
+
+    const prev = useCallback(() => setPosition((p) => Math.min(p + 1, hand.positions)), [hand.positions]);
+    const next = useCallback(() => setPosition((p) => Math.max(0, p - 1)), [])
+
+    useEffect(() => {
+        const onKeyPress = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case "ArrowLeft":
+                    prev();
+                    break;
+                case "ArrowRight":
+                    next();
+                    break;
+            }
+        }
+        document.addEventListener('keydown', onKeyPress);
+        return () => document.removeEventListener('keydown', onKeyPress);
+    }, []);
+
+
     return (
         <Paper square>
             <Paper square elevation={0} sx={{ backgroundColor: "secondary.main" }}>
@@ -29,7 +49,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
                 <Tooltip title="Previous">
                     <span>
                         <IconButton
-                            onClick={() => setPosition((p) => Math.min(p + 1, hand.positions))}
+                            onClick={prev}
                             disabled={position === hand.positions}>
                             <Icon>navigate_before</Icon>
                         </IconButton>
@@ -38,7 +58,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
                 <Tooltip title="Next">
                     <span>
                         <IconButton
-                            onClick={() => setPosition((p) => Math.max(0, p - 1))} disabled={position === 0}>
+                            onClick={next} disabled={position === 0}>
                             <Icon>navigate_next</Icon>
                         </IconButton>
                     </span>
