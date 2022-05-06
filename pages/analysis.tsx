@@ -45,7 +45,6 @@ const performImport = (data: string): Promise<Hand> => {
         return Promise.reject("No lin found in URL");
 
     }
-    console.log("lin", lin);
     const line = lin.split("\n")[0].trim();
     const terms = line.split("|");
 
@@ -103,10 +102,8 @@ const performImport = (data: string): Promise<Hand> => {
                 json.play.push(card);
                 break;
             default:
-                console.log("other key, value", key, value);
         }
     }
-    console.log("hand", json);
     return Promise.resolve(new Hand(json));
 }
 
@@ -135,6 +132,8 @@ function linBidToBid(b: string) {
         bid = "XX";
     } else if (bid === "P") {
         bid = "Pass";
+    } else {
+        bid = bid[0] + Suits[["C", "D", "H", "S"].indexOf(bid[1])]
     }
     return bid;
 }

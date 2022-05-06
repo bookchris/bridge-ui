@@ -8,6 +8,7 @@ export interface HandJson {
     deal?: number[],
     bidding?: string[],
     play?: number[],
+    players?: [],
 }
 
 export class Hand {
@@ -19,6 +20,7 @@ export class Hand {
             deal: data.deal || [],
             bidding: data.bidding || [],
             play: data.play || [],
+            players: data.players || [],
         }
     };
 
@@ -27,7 +29,7 @@ export class Hand {
             return []
         }
         const offset = 13 * seatIndex(seat);
-        return this.data.deal.slice(offset, offset + 13).filter((c) => !this.data.play.includes(c))
+        return this.data.deal.slice(offset, offset + 13).filter((c) => !this.data.play.includes(c)).sort((a, b) => a - b).reverse();
     }
 
     get north() {
@@ -35,7 +37,6 @@ export class Hand {
     }
 
     get south() {
-        console.log("south", this.getHolding(Seat.South));
         return this.getHolding(Seat.South);
     }
 
@@ -82,6 +83,27 @@ export class Hand {
         return this.bidding.declarer ? nextSeat(this.bidding.declarer) : undefined;
     }
 
+    get result() {
+        if (this.bidding.passed || this.state !== HandState.Complete || !this.bidding.level) {
+            return 0;
+        }
+        let tricks = 0;
+        if (this.bidding.declarer == Seat.North || this.bidding.declarer == Seat.South) {
+            tricks = this.tricks.filter((t) => t.winningSeat === Seat.North || t.winningSeat === Seat.South).length;
+        } else {
+            tricks = this.tricks.filter((t) => t.winningSeat === Seat.East || t.winningSeat === Seat.West).length;
+        }
+        return tricks - 6 + this.bidding.level;
+    }
+
+    get score() {
+        if (this.bidding.passed || this.state !== HandState.Complete) {
+            return 0;
+        }
+        // TODO
+        return 100;
+    }
+
 
     get player() {
         const tricks = this.tricks;
@@ -89,6 +111,15 @@ export class Hand {
             return this.openingLeader;
         }
         return tricks[tricks.length - 1].player;
+    }
+
+    get turn() {
+        if (this.isBidding) {
+            return this.nextBidder
+        }
+        if (this.isPlaying) {
+            return this.player;
+        }
     }
 
     get tricks() {
