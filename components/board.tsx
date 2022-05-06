@@ -14,11 +14,11 @@ import { ScoreBox } from "./scoreBox";
 import { Trick } from "./trick";
 
 interface BoardContextType {
-    hand: Hand,
-    position: number,
-    handAt: Hand,
-    width: number,
-    scale: number,
+  hand: Hand;
+  position: number;
+  handAt: Hand;
+  width: number;
+  scale: number;
 }
 
 const BoardContext = createContext({} as BoardContextType);
@@ -26,69 +26,95 @@ const BoardContext = createContext({} as BoardContextType);
 export const useBoardContext = () => useContext(BoardContext);
 
 export interface BoardProps {
-    hand?: Hand,
-    readOnly?: boolean,
+  hand: Hand;
+  readOnly?: boolean;
 }
 
 export function Board({ hand }: BoardProps) {
-    const [position, setPosition] = useState(0);
-    const readOnly = position !== 0;
+  const [position, setPosition] = useState(0);
+  const readOnly = position !== 0;
 
-    const theme = useTheme();
-    const columns = useMediaQuery(theme.breakpoints.up('lg'));
+  const theme = useTheme();
+  const columns = useMediaQuery(theme.breakpoints.up("lg"));
 
-    const ref = useRef<HTMLDivElement>(null);
-    const [width] = useSize(ref)
+  const ref = useRef<HTMLDivElement>(null);
+  const [width] = useSize(ref);
 
-    if (!hand) {
-        return <div>Loading...</div>
-    }
+  const handAt = hand.atPosition(position);
 
-    const handAt = hand.atPosition(position);
+  const value = useMemo(
+    () => ({
+      width: width,
+      scale: width / 900,
+      hand: hand,
+      handAt: handAt,
+      position: position,
+    }),
+    [width, hand, handAt, position]
+  );
 
-    const cards = (
-        <>
-            <Controls hand={hand} position={position} setPosition={setPosition} />
-            <ContractCard hand={handAt} />
-            <BiddingCard hand={hand} position={position} />
-            {hand.isBidding ? <div /> : <Play hand={hand} position={position} />}
-        </>);
-
-    const value = useMemo(() => ({
-        width: width,
-        scale: width / 900,
-        hand: hand,
-        handAt: handAt,
-        position: position,
-    }), [width, hand, handAt, position]);
-
-    return (
-        <div>
-            <BoardContext.Provider value={value}>
-                <Box sx={{ display: "flex", gap: 2, my: 2, justifyContent: "center", alignItems: "flex-start" }}>
-                    <Paper ref={ref} sx={{ backgroundColor: "#378B05", width: "min(100vmin, 900px);", height: "min(100vmin, 900px);", position: "relative" }}>
-                        <Holding seat={Seat.North} cards={handAt.north} />
-                        <Holding seat={Seat.West} cards={handAt.west} />
-                        <Holding seat={Seat.East} cards={handAt.east} />
-                        <Holding seat={Seat.South} cards={handAt.south} />
-                        <PlayerBox seat={Seat.South} />
-                        <PlayerBox seat={Seat.North} />
-                        <PlayerBox seat={Seat.East} />
-                        <PlayerBox seat={Seat.West} />
-                        {!readOnly && handAt.state === HandState.Bidding && <BidBox hand={handAt} />}
-                        {handAt.state === HandState.Playing && <Trick hand={handAt} />}
-                        {handAt.state === HandState.Complete && <ScoreBox hand={handAt} />}
-                    </Paper>
-                    {columns && (
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>{cards}</Box>
-                    )}
-                </Box>
-                {!columns && (
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: width /*"min(100vw, 900px);"*/ }}>
-                        {cards}
-                    </Box>
-                )}
-            </BoardContext.Provider>
-        </div>
-    );
-} 
+  const cards = (
+    <>
+      <Controls hand={hand} position={position} setPosition={setPosition} />
+      <ContractCard hand={handAt} />
+      <BiddingCard hand={hand} position={position} />
+      {hand.isBidding ? <div /> : <Play hand={hand} position={position} />}
+    </>
+  );
+  return (
+    <div>
+      <BoardContext.Provider value={value}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            my: 2,
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <Paper
+            ref={ref}
+            sx={{
+              backgroundColor: "#378B05",
+              width: "min(100vmin, 900px);",
+              height: "min(100vmin, 900px);",
+              position: "relative",
+            }}
+          >
+            <Holding seat={Seat.North} cards={handAt.north} />
+            <Holding seat={Seat.West} cards={handAt.west} />
+            <Holding seat={Seat.East} cards={handAt.east} />
+            <Holding seat={Seat.South} cards={handAt.south} />
+            <PlayerBox seat={Seat.South} />
+            <PlayerBox seat={Seat.North} />
+            <PlayerBox seat={Seat.East} />
+            <PlayerBox seat={Seat.West} />
+            {!readOnly && handAt.state === HandState.Bidding && (
+              <BidBox hand={handAt} />
+            )}
+            {handAt.state === HandState.Playing && <Trick hand={handAt} />}
+            {handAt.state === HandState.Complete && <ScoreBox hand={handAt} />}
+          </Paper>
+          {columns && (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {cards}
+            </Box>
+          )}
+        </Box>
+        {!columns && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              width: width /*"min(100vw, 900px);"*/,
+            }}
+          >
+            {cards}
+          </Box>
+        )}
+      </BoardContext.Provider>
+    </div>
+  );
+}
