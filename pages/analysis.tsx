@@ -135,7 +135,13 @@ const performImport = (data: string): Promise<Hand> => {
         }
         json.play.push(card);
         break;
+      case "pn":
+        const players = value.split(",");
+        if (players.length == 4) {
+          json.players = players;
+        }
       default:
+        console.log("other", key, value);
     }
   }
   return Promise.resolve(new Hand(json));

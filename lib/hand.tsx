@@ -8,7 +8,8 @@ export interface HandJson {
   deal?: number[];
   bidding?: string[];
   play?: number[];
-  players?: [];
+  players?: string[];
+  claim?: number;
 }
 
 export class Hand {
