@@ -18,7 +18,8 @@ export function ScoreBox({ hand }: ScoreBoxProps) {
       }}
     >
       <Typography paragraph>
-        Result: {hand.bidding.contract} {hand.result}
+        Result: {hand.bidding.contract}{" "}
+        {hand.result >= 0 ? `+${hand.result}` : hand.result}
       </Typography>
       <Typography paragraph>Score: {hand.score}</Typography>
     </Paper>

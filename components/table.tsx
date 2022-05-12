@@ -2,20 +2,19 @@ import { createContext, useContext } from "react";
 import { useTable } from "../lib/table";
 import { Board } from "./board";
 
-const tableId = "NYHC3TLyjxRso2RkBHtZ";
-const BoardContext = createContext("");
-export const useTableId = () => useContext(BoardContext);
+const TableContext = createContext("");
+export const useTableId = () => useContext(TableContext);
 
-export function Table() {
-  const [hand, loading, error] = useTable(tableId);
+export function Table({ id }: { id: string }) {
+  const [hand, loading, error] = useTable(id);
 
   if (!hand) {
     return <div>Loading...</div>;
   }
 
   return (
-    <BoardContext.Provider value={tableId}>
+    <TableContext.Provider value={id}>
       <Board hand={hand} />
-    </BoardContext.Provider>
+    </TableContext.Provider>
   );
 }

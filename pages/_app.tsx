@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { AppProps } from "next/app";
+import { ProfileButton } from "../components/profileButton";
 import { theme } from "../components/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -17,16 +18,18 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CssBaseline />
       <AppBar position="absolute" color="secondary" elevation={0}>
         <Toolbar>
-          <Typography variant="h4" color="inherit" noWrap>
-            bridge
-          </Typography>
-          <Box sx={{ display: "flex", ml: 10, gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+            <Typography variant="h4" color="inherit" noWrap sx={{ pr: 10 }}>
+              bridge
+            </Typography>
             <Button color="inherit" href="/">
               Play
             </Button>
             <Button color="inherit" href="/analysis">
               Analyse
             </Button>
+            <Box sx={{ flexGrow: 1 }} />
+            <ProfileButton />
           </Box>
         </Toolbar>
       </AppBar>
@@ -37,6 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          mt: 2,
         }}
       >
         <Component {...pageProps} />

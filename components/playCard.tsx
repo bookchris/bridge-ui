@@ -61,6 +61,7 @@ export function Play({ hand, position }: PlayProps) {
             cols.push(
               ...Array(cols.length === 4 ? 0 : 1).fill(
                 <TableCell
+                  key="blank"
                   sx={{
                     backgroundColor:
                       i * 4 + cols.length === highlighted
