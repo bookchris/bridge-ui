@@ -12,3 +12,7 @@ export function seatIndex(seat: Seat) {
 export function nextSeat(seat: Seat, num: number = 1) {
   return Object.values(Seat)[(seatIndex(seat) + num) % 4];
 }
+
+export function partnerSeat(seat: Seat) {
+  return nextSeat(seat, 2);
+}

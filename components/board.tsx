@@ -27,7 +27,6 @@ export const useBoardContext = () => useContext(BoardContext);
 
 export interface BoardProps {
   hand: Hand;
-  readOnly?: boolean;
 }
 
 export function Board({ hand }: BoardProps) {
@@ -116,5 +115,49 @@ export function Board({ hand }: BoardProps) {
         )}
       </BoardContext.Provider>
     </div>
+  );
+}
+
+export interface MiniBoardProps {
+  hand: Hand;
+  onClick?: () => void;
+}
+
+export function MiniBoard({ hand, onClick = () => {} }: MiniBoardProps) {
+  const width = 400;
+  const value = useMemo(
+    () => ({
+      width: width,
+      scale: width / 900,
+      hand: hand,
+      handAt: hand,
+      position: 0,
+    }),
+    [width, hand]
+  );
+
+  return (
+    <Paper
+      onClick={onClick}
+      sx={{
+        backgroundColor: "#378B05",
+        width: `${width}px`,
+        height: `${width}px`,
+        position: "relative",
+      }}
+    >
+      <BoardContext.Provider value={value}>
+        <Holding seat={Seat.North} cards={hand.north} />
+        <Holding seat={Seat.West} cards={hand.west} />
+        <Holding seat={Seat.East} cards={hand.east} />
+        <Holding seat={Seat.South} cards={hand.south} />
+        <PlayerBox seat={Seat.South} />
+        <PlayerBox seat={Seat.North} />
+        <PlayerBox seat={Seat.East} />
+        <PlayerBox seat={Seat.West} />
+        {hand.state === HandState.Playing && <Trick hand={hand} />}
+        {hand.state === HandState.Complete && <ScoreBox hand={hand} />}
+      </BoardContext.Provider>
+    </Paper>
   );
 }

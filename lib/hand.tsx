@@ -22,6 +22,7 @@ export class Hand {
       bidding: data.bidding || [],
       play: data.play || [],
       players: data.players || [],
+      claim: data.claim || -1,
     };
   }
 
@@ -72,6 +73,7 @@ export class Hand {
     if (!this.bidding.complete) {
       return HandState.Bidding;
     }
+    if (this.data.claim !== -1) return HandState.Complete;
     if (this.data.play?.length === 52) return HandState.Complete;
     return HandState.Playing;
   }
@@ -97,27 +99,30 @@ export class Hand {
       return 0;
     }
     let tricks = 0;
-    if (
-      this.bidding.declarer == Seat.North ||
-      this.bidding.declarer == Seat.South
-    ) {
-      tricks = this.tricks.filter(
-        (t) => t.winningSeat === Seat.North || t.winningSeat === Seat.South
-      ).length;
+    if (this.data.claim !== -1) {
+      tricks = this.data.claim;
     } else {
-      tricks = this.tricks.filter(
-        (t) => t.winningSeat === Seat.East || t.winningSeat === Seat.West
-      ).length;
+      if (
+        this.bidding.declarer == Seat.North ||
+        this.bidding.declarer == Seat.South
+      ) {
+        tricks = this.tricks.filter(
+          (t) => t.winningSeat === Seat.North || t.winningSeat === Seat.South
+        ).length;
+      } else {
+        tricks = this.tricks.filter(
+          (t) => t.winningSeat === Seat.East || t.winningSeat === Seat.West
+        ).length;
+      }
     }
-    return tricks - 6 + this.bidding.level;
+    return tricks - (6 + this.bidding.level);
   }
 
   get score() {
     if (this.bidding.passed || this.state !== HandState.Complete) {
       return 0;
     }
-    // TODO
-    return 100;
+    return "TODO";
   }
 
   get player() {

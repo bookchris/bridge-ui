@@ -1,4 +1,4 @@
-import { nextSeat, Seat } from "./seat";
+import { nextSeat, partnerSeat, Seat } from "./seat";
 import { Suit, Suits } from "./suit";
 
 export const SuitBids = ["1", "2", "3", "4", "5", "6", "7"].reduce(
@@ -34,15 +34,14 @@ export class Bidding {
   suit?: Suit;
   level?: number;
   index?: number;
+  bidder?: Seat;
   doubled?: boolean;
   redoubled?: boolean;
-  firstBid: Map<Suit, Seat>;
   complete: boolean;
   passed: boolean;
 
   constructor(bids: string[], private dealer: Seat) {
     this.bids = [];
-    this.firstBid = new Map();
     bids.forEach((b, i) => {
       const bid = new Bid(b);
       if (bid.suit && bid.index && bid.level) {
@@ -51,9 +50,7 @@ export class Bidding {
         this.level = bid.level;
         this.doubled = false;
         this.redoubled = false;
-        if (!this.firstBid.has(this.suit)) {
-          this.firstBid.set(this.suit, nextSeat(this.dealer, i));
-        }
+        this.bidder = nextSeat(this.dealer, i);
       }
       if (bid.bid === "X") {
         this.doubled = true;
@@ -84,9 +81,23 @@ export class Bidding {
   }
 
   get declarer() {
-    if (this.suit) {
-      return this.firstBid.get(this.suit);
+    if (this.suit && this.bidder) {
+      const partner = partnerSeat(this.bidder);
+      let seat = this.dealer;
+      for (let i = 0; i < this.bids.length; i++) {
+        const bid = this.bids[i];
+        if (bid.suit === this.suit) {
+          if (seat === this.bidder) {
+            return this.bidder;
+          }
+          if (seat === partner) {
+            return partner;
+          }
+        }
+        seat = nextSeat(seat);
+      }
     }
+    return undefined;
   }
 
   get pendingOpponentBid() {
