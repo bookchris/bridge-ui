@@ -88,11 +88,10 @@ export function useBid() {
   return useCallback(
     async (bid: string, seat: Seat) => {
       const [ref, _, table] = await get(tableId);
-      if (!table.isBidding) throw new Error("Not in bidding state");
-      if (table.nextBidder != seat) throw new Error(`Not ${seat} turn to bid`);
-      if (!table.bidding.validateNext(bid))
-        throw new Error(`Bid ${bid} is not valid`);
-      await updateDoc(ref, { bidding: [...table.data.bidding, bid] });
+      const newTable = table.doBid(bid, seat);
+      if (newTable) {
+        await updateDoc(ref, newTable.data);
+      }
     },
     [tableId]
   );
