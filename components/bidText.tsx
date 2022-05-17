@@ -1,6 +1,6 @@
+import { Suit } from "@chrisbook/bridge-core";
 import { Box, Typography } from "@mui/material";
 import { Bid } from "../lib/bidding";
-import { Suit } from "../lib/suit";
 
 export interface BidTextProps {
   bid: Bid;

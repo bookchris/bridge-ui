@@ -1,6 +1,6 @@
+import { Suit } from "@chrisbook/bridge-core";
 import { Typography } from "@mui/material";
 import { cardString, cardSuit } from "../lib/hand";
-import { Suit } from "../lib/suit";
 
 export interface CardTextProps {
   card: number;

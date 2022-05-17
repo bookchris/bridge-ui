@@ -1,5 +1,5 @@
+import { Suit, Suits } from "@chrisbook/bridge-core";
 import { nextSeat, partnerSeat, Seat } from "./seat";
-import { Suit, Suits } from "./suit";
 
 export const SuitBids = ["1", "2", "3", "4", "5", "6", "7"].reduce(
   (res, bid: string) => {

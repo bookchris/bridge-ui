@@ -1,3 +1,4 @@
+import { Card } from "@chrisbook/bridge-core";
 import {
   arrayUnion,
   collection,
@@ -13,7 +14,6 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useTableId } from "../components/table";
 import { db } from "../utils/firebase";
-import { Card } from "./card";
 import { Hand, HandJson } from "./hand";
 import { Seat } from "./seat";
 
