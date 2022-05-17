@@ -1,6 +1,6 @@
+import { Suit } from "@chrisbook/bridge-core";
 import { cardSuit } from "./hand";
 import { nextSeat, Seat } from "./seat";
-import { Suit } from "./suit";
 
 export class Trick {
   constructor(

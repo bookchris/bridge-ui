@@ -1,3 +1,4 @@
+import { Suit, Suits } from "@chrisbook/bridge-core";
 import {
   Alert,
   Box,
@@ -11,7 +12,6 @@ import { useState } from "react";
 import { Board } from "../components/board";
 import { Hand, HandJson } from "../lib/hand";
 import { Seat } from "../lib/seat";
-import { Suit, Suits } from "../lib/suit";
 
 const Analyse: NextPage = () => {
   const [hand, setHand] = useState<Hand>();

@@ -1,7 +1,7 @@
+import { Suit } from "@chrisbook/bridge-core";
 import { Bidding } from "./bidding";
 import { Trick } from "./play";
 import { nextSeat, Seat, seatIndex } from "./seat";
-import { Suit } from "./suit";
 
 export interface HandJson {
   dealer?: Seat;

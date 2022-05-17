@@ -18,7 +18,6 @@ export const ProfileButton = () => {
       </Button>
     );
   }
-  console.log(user.uid)
   return (
     <>
       <Button
