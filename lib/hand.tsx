@@ -190,6 +190,23 @@ export class Hand {
       play: play,
     });
   }
+
+  canBid(bid: string, seat: Seat) {
+    if (!this.isBidding) return false;
+    if (this.nextBidder != seat) return false;
+    if (!this.bidding.validateNext(bid)) return false;
+    return true;
+  }
+
+  doBid(bid: string, seat: Seat) {
+    if (!this.canBid(bid, seat)) {
+      return undefined;
+    }
+    return new Hand({
+      ...this.data,
+      bidding: [...this.data.bidding, bid],
+    });
+  }
 }
 
 export enum HandState {
