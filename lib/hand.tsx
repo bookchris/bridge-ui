@@ -1,7 +1,6 @@
-import { Suit } from "@chrisbook/bridge-core";
+import { Card, Seat } from "@chrisbook/bridge-core";
 import { Bidding } from "./bidding";
 import { Trick } from "./play";
-import { nextSeat, Seat, seatIndex } from "./seat";
 
 export interface HandJson {
   dealer?: Seat;
@@ -26,16 +25,17 @@ export class Hand {
     };
   }
 
-  getHolding(seat: Seat) {
+  getHolding(seat: Seat): Card[] {
     if (this.data.deal.length != 52) {
       return [];
     }
-    const offset = 13 * seatIndex(seat);
+    const offset = 13 * seat.index();
     return this.data.deal
       .slice(offset, offset + 13)
       .filter((c) => !this.data.play.includes(c))
       .sort((a, b) => a - b)
-      .reverse();
+      .reverse()
+      .map((c) => new Card(c));
   }
 
   get north() {
@@ -55,7 +55,7 @@ export class Hand {
   }
 
   get nextBidder() {
-    return nextSeat(this.dealer, this.bidding.bids.length);
+    return this.dealer.next(this.bidding.bids.length);
   }
 
   get dealer() {
@@ -87,7 +87,7 @@ export class Hand {
   }
 
   get openingLeader() {
-    return this.bidding.declarer ? nextSeat(this.bidding.declarer) : undefined;
+    return this.bidding.declarer ? this.bidding.declarer.next() : undefined;
   }
 
   get result() {
@@ -153,7 +153,7 @@ export class Hand {
     let leader = this.openingLeader;
     const tricks = [] as Trick[];
     for (let i = 0; i < this.data.play.length; i += 4) {
-      const cards = this.data.play.slice(i, i + 4);
+      const cards = this.data.play.slice(i, i + 4).map((c) => new Card(c));
       const trick = new Trick(leader, cards, trump);
       if (trick.winningSeat) {
         leader = trick.winningSeat;
@@ -213,30 +213,4 @@ export enum HandState {
   Bidding,
   Playing,
   Complete,
-}
-
-export function cardSuit(card: number) {
-  return Object.values(Suit)[Math.floor(card / 13)];
-}
-
-export function cardRank(card: number) {
-  const rank = card % 13;
-  switch (rank) {
-    case 8:
-      return "T";
-    case 9:
-      return "J";
-    case 10:
-      return "Q";
-    case 11:
-      return "K";
-    case 12:
-      return "A";
-    default:
-      return `${rank + 2}`;
-  }
-}
-
-export function cardString(card: number) {
-  return `${cardRank(card)}${cardSuit(card)}`;
 }

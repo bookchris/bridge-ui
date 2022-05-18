@@ -1,29 +1,4 @@
-import { Suit, Suits } from "@chrisbook/bridge-core";
-import { nextSeat, partnerSeat, Seat } from "./seat";
-
-export const SuitBids = ["1", "2", "3", "4", "5", "6", "7"].reduce(
-  (res, bid: string) => {
-    const level = Suits.map((s) => bid + s);
-    return res.concat(level);
-  },
-  [] as string[]
-);
-
-export class Bid {
-  bid: string;
-  suit?: Suit;
-  level?: number;
-  index?: number;
-
-  constructor(bid: string) {
-    this.bid = bid;
-    if (bid != "Pass" && bid != "X" && bid != "XX") {
-      this.suit = bid.substring(1) as Suit;
-      this.index = SuitBids.indexOf(bid);
-      this.level = parseInt(bid[0]);
-    }
-  }
-}
+import { Bid, Seat, Suit, SuitBids } from "@chrisbook/bridge-core";
 
 export class Contract {
   suit?: Suit;
@@ -50,7 +25,7 @@ export class Bidding {
         this.level = bid.level;
         this.doubled = false;
         this.redoubled = false;
-        this.bidder = nextSeat(this.dealer, i);
+        this.bidder = this.dealer.next(i);
       }
       if (bid.bid === "X") {
         this.doubled = true;
@@ -82,7 +57,7 @@ export class Bidding {
 
   get declarer() {
     if (this.suit && this.bidder) {
-      const partner = partnerSeat(this.bidder);
+      const partner = this.bidder.partner();
       let seat = this.dealer;
       for (let i = 0; i < this.bids.length; i++) {
         const bid = this.bids[i];
@@ -94,7 +69,7 @@ export class Bidding {
             return partner;
           }
         }
-        seat = nextSeat(seat);
+        seat = seat.next();
       }
     }
     return undefined;

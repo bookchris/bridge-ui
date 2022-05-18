@@ -1,4 +1,4 @@
-import { Card } from "@chrisbook/bridge-core";
+import { Card, Seat } from "@chrisbook/bridge-core";
 import {
   arrayUnion,
   collection,
@@ -15,7 +15,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useTableId } from "../components/table";
 import { db } from "../utils/firebase";
 import { Hand, HandJson } from "./hand";
-import { Seat } from "./seat";
 
 class Table extends Hand {
   constructor(public id: string, hand: HandJson) {
@@ -100,20 +99,19 @@ export function useBid() {
 export function usePlay() {
   const tableId = useTableId();
   return useCallback(
-    async (card: number, seat: Seat) => {
+    async (card: Card, seat: Seat) => {
       const [ref, _, table] = await get(tableId);
       if (!table.isPlaying) throw new Error("Not in playing state");
       if (table.player != seat) throw new Error(`Not ${seat}'s turn to play`);
       const holding = table.getHolding(seat);
-      if (!holding.includes(card))
+      if (!holding.find((c) => c.id === card.id))
         throw new Error(`${seat} doesn't have card ${card}`);
       const lastTrick = table.tricks.at(-1);
       if (lastTrick && !lastTrick.complete) {
-        const lead = new Card(lastTrick.cards[0]);
-        const c = new Card(card);
+        const lead = lastTrick.cards[0];
         if (
-          c.suit !== lead.suit &&
-          holding.filter((c) => new Card(c).suit === lead.suit).length
+          card.suit !== lead.suit &&
+          holding.filter((c) => c.suit === lead.suit).length
         )
           throw new Error(`Must follow suit`);
       }
