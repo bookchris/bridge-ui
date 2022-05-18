@@ -1,3 +1,4 @@
+import { Seat } from "@chrisbook/bridge-core";
 import {
   Paper,
   Table,
@@ -9,7 +10,6 @@ import {
 } from "@mui/material";
 import { Hand } from "../lib/hand";
 import { Trick } from "../lib/play";
-import { nextSeat, Seat } from "../lib/seat";
 import { CardText } from "./cardText";
 
 export interface PlayProps {
@@ -48,7 +48,7 @@ export function Play({ hand, position }: PlayProps) {
           {tricks.map((trick, i) => {
             let cols = trick.cards.map((card, j) => (
               <TableCell
-                key={card}
+                key={card.id}
                 align="center"
                 sx={{
                   backgroundColor:
@@ -79,7 +79,7 @@ export function Play({ hand, position }: PlayProps) {
             let player = Seat.West;
             while (player != trick.leader) {
               cols.unshift(cols.pop()!);
-              player = nextSeat(player);
+              player = player.next();
             }
             return <TableRow key={i}>{cols}</TableRow>;
           })}

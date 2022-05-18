@@ -1,7 +1,7 @@
+import { Seat } from "@chrisbook/bridge-core";
 import { Box, Button, ButtonProps, Icon, Paper } from "@mui/material";
 import { useState } from "react";
 import { Hand } from "../lib/hand";
-import { Seat } from "../lib/seat";
 import { useBid } from "../lib/table";
 
 export interface BidBoxProps {

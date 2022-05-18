@@ -1,3 +1,4 @@
+import { Card } from "@chrisbook/bridge-core";
 import { Paper, PaperProps, styled } from "@mui/material";
 import { useBoardContext } from "./board";
 
@@ -74,7 +75,7 @@ export enum Orientation {
 }
 
 export interface CardProps extends PaperProps {
-  card: number;
+  card: Card;
   orientation?: Orientation;
 }
 
@@ -112,7 +113,7 @@ export function Card2({
       }}
     >
       <CardImage
-        src={IMAGES[card + 1]}
+        src={IMAGES[card.id + 1]}
         sx={{ width: width, height: height, ...imageSxProps[orientation] }}
       />
     </Paper>

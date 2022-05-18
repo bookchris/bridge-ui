@@ -1,11 +1,9 @@
-import { Suit } from "@chrisbook/bridge-core";
-import { cardSuit } from "./hand";
-import { nextSeat, Seat } from "./seat";
+import { Card, Seat, Suit } from "@chrisbook/bridge-core";
 
 export class Trick {
   constructor(
     readonly leader: Seat,
-    readonly cards: number[],
+    readonly cards: Card[],
     readonly trump: Suit
   ) {}
 
@@ -17,7 +15,7 @@ export class Trick {
     if (this.complete) {
       return this.winningSeat;
     } else {
-      return nextSeat(this.leader, this.cards.length);
+      return this.leader.next(this.cards.length);
     }
   }
 
@@ -28,16 +26,16 @@ export class Trick {
     let winner = this.cards[0];
     let seat = this.leader;
     this.cards.slice(1).forEach((card, i) => {
-      const ws = cardSuit(winner);
-      const cs = cardSuit(card);
+      const ws = winner.suit;
+      const cs = card.suit;
       if (ws == cs) {
         if (winner < card) {
           winner = card;
-          seat = nextSeat(this.leader, i + 1);
+          seat = this.leader.next(i + 1);
         }
       } else if (cs == this.trump) {
         winner = card;
-        seat = nextSeat(this.leader, i + 1);
+        seat = this.leader.next(i + 1);
       }
     });
     return seat;

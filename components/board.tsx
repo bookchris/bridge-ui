@@ -1,8 +1,8 @@
+import { Seat } from "@chrisbook/bridge-core";
 import { Box, Paper, useMediaQuery, useTheme } from "@mui/material";
 import useSize from "@react-hook/size";
 import { createContext, useContext, useMemo, useRef, useState } from "react";
 import { Hand, HandState } from "../lib/hand";
-import { Seat } from "../lib/seat";
 import { BidBox } from "./bidBox";
 import { BiddingCard } from "./biddingCard";
 import { ContractCard } from "./contractCard";

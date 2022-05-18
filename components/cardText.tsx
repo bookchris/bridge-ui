@@ -1,22 +1,20 @@
-import { Suit } from "@chrisbook/bridge-core";
+import { Card, Suit } from "@chrisbook/bridge-core";
 import { Typography } from "@mui/material";
-import { cardString, cardSuit } from "../lib/hand";
 
 export interface CardTextProps {
-  card: number;
+  card: Card;
 }
 
 export function CardText({ card }: CardTextProps) {
-  const suit = cardSuit(card);
   return (
     <Typography variant="inherit" sx={{ color: cardColor(card) }}>
-      {cardString(card)}
+      {card.toString()}
     </Typography>
   );
 }
 
-export function cardColor(card: number) {
-  switch (cardSuit(card)) {
+export function cardColor(card: Card) {
+  switch (card.suit) {
     case Suit.Heart:
       return "red";
     case Suit.Diamond:

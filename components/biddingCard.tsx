@@ -1,3 +1,4 @@
+import { Seat } from "@chrisbook/bridge-core";
 import {
   Paper,
   Table,
@@ -9,7 +10,6 @@ import {
 } from "@mui/material";
 import { ReactNode } from "react";
 import { Hand } from "../lib/hand";
-import { nextSeat, Seat } from "../lib/seat";
 import { BidText } from "./bidText";
 import { TableRowGrouper } from "./tableRowGrouper";
 
@@ -26,9 +26,9 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
   const dealer = hand.dealer;
 
   const bids = [] as ReactNode[];
-  let pos = nextSeat(viewer);
+  let pos = viewer.next();
   while (pos != dealer) {
-    pos = nextSeat(pos);
+    pos = pos.next();
     bids.push(<TableCell key={"empty" + pos} />);
   }
   hand.bidding.bids.forEach((bid, i) => {

@@ -1,5 +1,5 @@
+import { Seat } from "@chrisbook/bridge-core";
 import { Box, Paper, Typography } from "@mui/material";
-import { Seat } from "../lib/seat";
 import { useBoardContext } from "./board";
 
 export interface PlayerBoxProps {
@@ -14,29 +14,29 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
   const isTurn = handAt.turn === seat;
 
   const paperSx = {
-    [Seat.North]: {
+    [Seat.North.toString()]: {
       top: "0%",
       bottom: "95%",
       left: "50%",
       transform: `translate(-50%) scale(${scale})`,
     },
-    [Seat.South]: {
+    [Seat.South.toString()]: {
       bottom: "0%",
       top: "95%",
       left: "50%",
       transform: `translate(-50%) scale(${scale})`,
     },
-    [Seat.West]: {
+    [Seat.West.toString()]: {
       left: "2.5%",
       top: "50%",
       transform: `translate(-50%) rotate(270deg) scale(${scale})`,
     },
-    [Seat.East]: {
+    [Seat.East.toString()]: {
       right: "2.5%",
       top: "50%",
       transform: `translate(50%) rotate(90deg) scale(${scale})`,
     },
-  }[seat];
+  }[seat.toString()];
 
   return (
     <Box
@@ -61,7 +61,7 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
           }}
         >
           <Typography sx={{ color: "secondary.main", fontWeight: 600 }}>
-            {seat.charAt(0)}
+            {seat.toChar()}
           </Typography>
         </Paper>
         <Paper
