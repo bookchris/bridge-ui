@@ -1,5 +1,4 @@
-import { Seat } from "@chrisbook/bridge-core";
-import { Hand } from "../lib/hand";
+import { Hand, Seat } from "@chrisbook/bridge-core";
 import { Card2 } from "./card";
 
 const OFFSET = "32%";

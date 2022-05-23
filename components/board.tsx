@@ -1,8 +1,7 @@
-import { Seat } from "@chrisbook/bridge-core";
+import { Hand, HandState, Seat } from "@chrisbook/bridge-core";
 import { Box, Paper, useMediaQuery, useTheme } from "@mui/material";
 import useSize from "@react-hook/size";
 import { createContext, useContext, useMemo, useRef, useState } from "react";
-import { Hand, HandState } from "../lib/hand";
 import { BidBox } from "./bidBox";
 import { BiddingCard } from "./biddingCard";
 import { ContractCard } from "./contractCard";
@@ -11,7 +10,9 @@ import { Holding } from "./holding";
 import { Play } from "./playCard";
 import { PlayerBox } from "./playerBox";
 import { ScoreBox } from "./scoreBox";
+import { SetCard } from "./setCard";
 import { Trick } from "./trick";
+import { VariationsCard } from "./variationsCard";
 
 interface BoardContextType {
   hand: Hand;
@@ -27,19 +28,36 @@ export const useBoardContext = () => useContext(BoardContext);
 
 export interface BoardProps {
   hand: Hand;
+  allHands?: Hand[];
 }
 
-export function Board({ hand }: BoardProps) {
-  const [position, setPosition] = useState(0);
-  const readOnly = position !== 0;
+export function Board({ hand, allHands }: BoardProps) {
+  const [position, setPosition] = useState(-1);
+  const readOnly = position !== -1;
 
   const theme = useTheme();
-  const columns = useMediaQuery(theme.breakpoints.up("lg"));
+  const isLg = useMediaQuery(theme.breakpoints.up("lg"));
+  const isXl = useMediaQuery(theme.breakpoints.up("xl"));
 
   const ref = useRef<HTMLDivElement>(null);
   const [width] = useSize(ref);
 
   const handAt = hand.atPosition(position);
+  console.log("position", hand, handAt);
+
+  const set = useMemo(
+    () =>
+      allHands
+        ?.filter((h) => h.players[0].toString() === hand.players[0].toString())
+        .slice()
+        .sort((a, b) => a.board - b.board),
+    [allHands, hand]
+  );
+
+  const variations = useMemo(
+    () => allHands?.filter((h) => h.board === hand.board),
+    [allHands, hand.board]
+  );
 
   const value = useMemo(
     () => ({
@@ -52,12 +70,18 @@ export function Board({ hand }: BoardProps) {
     [width, hand, handAt, position]
   );
 
-  const cards = (
+  const left = (
+    <>
+      {set && <SetCard hand={hand} set={set} />}
+      {set && <VariationsCard variations={variations} />}
+    </>
+  );
+  const right = (
     <>
       <Controls hand={hand} position={position} setPosition={setPosition} />
-      <ContractCard hand={handAt} />
+      {!set && <ContractCard hand={handAt} />}
       <BiddingCard hand={hand} position={position} />
-      {hand.isBidding ? <div /> : <Play hand={hand} position={position} />}
+      {!hand.isBidding && <Play hand={hand} position={position} />}
     </>
   );
   return (
@@ -67,11 +91,23 @@ export function Board({ hand }: BoardProps) {
           sx={{
             display: "flex",
             gap: 2,
-            my: 2,
+            //my: 2,
             justifyContent: "center",
             alignItems: "flex-start",
           }}
         >
+          {isXl && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 300,
+              }}
+            >
+              {left}
+            </Box>
+          )}
           <Paper
             ref={ref}
             sx={{
@@ -95,24 +131,31 @@ export function Board({ hand }: BoardProps) {
             {handAt.state === HandState.Playing && <Trick hand={handAt} />}
             {handAt.state === HandState.Complete && <ScoreBox hand={handAt} />}
           </Paper>
-          {columns && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {cards}
+          {isLg && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 300,
+              }}
+            >
+              {right}
             </Box>
           )}
         </Box>
-        {!columns && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              width: width /*"min(100vw, 900px);"*/,
-            }}
-          >
-            {cards}
-          </Box>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            width: width /*"min(100vw, 900px);"*/,
+            mt: 2,
+          }}
+        >
+          {!isXl && left}
+          {!isLg && right}
+        </Box>
       </BoardContext.Provider>
     </div>
   );
@@ -131,7 +174,7 @@ export function MiniBoard({ hand, onClick = () => {} }: MiniBoardProps) {
       scale: width / 900,
       hand: hand,
       handAt: hand,
-      position: 0,
+      position: -1,
     }),
     [width, hand]
   );

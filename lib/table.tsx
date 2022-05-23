@@ -1,4 +1,11 @@
-import { Card, Seat } from "@chrisbook/bridge-core";
+import {
+  Bid,
+  Card,
+  Hand,
+  HandJson,
+  HandState,
+  Seat,
+} from "@chrisbook/bridge-core";
 import {
   arrayUnion,
   collection,
@@ -14,12 +21,12 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useTableId } from "../components/table";
 import { db } from "../utils/firebase";
-import { Hand, HandJson } from "./hand";
 
-class Table extends Hand {
-  constructor(public id: string, hand: HandJson) {
-    super(hand);
-  }
+console.log("fromJson", Hand.fromJson);
+console.log("playing", HandState.Playing);
+
+class Table {
+  constructor(readonly id: string, readonly hand: Hand) {}
 }
 
 export function tableDoc(id: string) {
@@ -35,7 +42,7 @@ export function useTable(
     const unsub = onSnapshot(
       tableDoc(id),
       (d) => {
-        setTable(new Table(d.id, d.data() as HandJson));
+        setTable(new Table(d.id, Hand.fromJson(d.data() as HandJson)));
         return () => unsub();
       },
       setError
@@ -58,7 +65,7 @@ export function useTableList(): [
       (qs) => {
         const tables = [] as Table[];
         qs.forEach((doc) => {
-          tables.push(new Table(doc.id, doc.data() as HandJson));
+          tables.push(new Table(doc.id, Hand.fromJson(doc.data() as HandJson)));
         });
         setTables(tables);
         return () => unsub();
@@ -73,7 +80,7 @@ export function useCreateTable() {
   return useCallback(async () => {
     const ref = doc(collection(db, "tables"));
     await setDoc(ref, {
-      dealer: Seat.South,
+      dealer: Seat.South.toJson(),
       deal: generateDeal(),
       bidding: [],
       play: [],
@@ -85,11 +92,11 @@ export function useCreateTable() {
 export function useBid() {
   const tableId = useTableId();
   return useCallback(
-    async (bid: string, seat: Seat) => {
+    async (bid: Bid, seat: Seat) => {
       const [ref, _, table] = await get(tableId);
-      const newTable = table.doBid(bid, seat);
-      if (newTable) {
-        await updateDoc(ref, newTable.data);
+      const newHand = table.hand.doBid(bid, seat);
+      if (newHand) {
+        await updateDoc(ref, newHand.toJson());
       }
     },
     [tableId]
@@ -101,12 +108,13 @@ export function usePlay() {
   return useCallback(
     async (card: Card, seat: Seat) => {
       const [ref, _, table] = await get(tableId);
-      if (!table.isPlaying) throw new Error("Not in playing state");
-      if (table.player != seat) throw new Error(`Not ${seat}'s turn to play`);
-      const holding = table.getHolding(seat);
+      const hand = table.hand;
+      if (!hand.isPlaying) throw new Error("Not in playing state");
+      if (hand.player != seat) throw new Error(`Not ${seat}'s turn to play`);
+      const holding = hand.getHolding(seat);
       if (!holding.find((c) => c.id === card.id))
         throw new Error(`${seat} doesn't have card ${card}`);
-      const lastTrick = table.tricks.at(-1);
+      const lastTrick = hand.tricks.at(-1);
       if (lastTrick && !lastTrick.complete) {
         const lead = lastTrick.cards[0];
         if (
@@ -116,7 +124,7 @@ export function usePlay() {
           throw new Error(`Must follow suit`);
       }
       await updateDoc(ref, {
-        play: arrayUnion(card),
+        play: arrayUnion(card.id),
       });
     },
     [tableId]
@@ -128,7 +136,7 @@ export function useRedeal() {
   return useCallback(async () => {
     const ref = tableDoc(tableId);
     return updateDoc(ref, {
-      dealer: Seat.South,
+      dealer: Seat.South.toJson(),
       deal: generateDeal(),
       bidding: [],
       play: [],
@@ -144,7 +152,7 @@ async function get(
   if (!snap.exists()) {
     throw "Table does not exist";
   }
-  return [ref, snap, new Table(ref.id, snap.data() as HandJson)];
+  return [ref, snap, new Table(ref.id, Hand.fromJson(snap.data() as HandJson))];
 }
 
 function generateDeal() {

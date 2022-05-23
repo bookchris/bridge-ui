@@ -6,15 +6,15 @@ const TableContext = createContext("");
 export const useTableId = () => useContext(TableContext);
 
 export function Table({ id }: { id: string }) {
-  const [hand, loading, error] = useTable(id);
+  const [table, loading, error] = useTable(id);
 
-  if (!hand) {
+  if (!table) {
     return <div>Loading...</div>;
   }
 
   return (
     <TableContext.Provider value={id}>
-      <Board hand={hand} />
+      <Board hand={table.hand} />
     </TableContext.Provider>
   );
 }

@@ -9,8 +9,7 @@ export interface PlayerBoxProps {
 export function PlayerBox({ seat }: PlayerBoxProps) {
   const { scale, handAt } = useBoardContext();
 
-  const player =
-    handAt.data.players[Object.values(Seat).indexOf(seat)] || "Unknown";
+  const player = handAt.players[Object.values(Seat).indexOf(seat)] || "Unknown";
   const isTurn = handAt.turn === seat;
 
   const paperSx = {
@@ -75,7 +74,7 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
             backgroundColor: isTurn ? "info.dark" : "secondary.main",
           }}
         >
-          <Typography sx={{ color: "white" }}>{player}</Typography>
+          <Typography sx={{ color: "white" }}>{player.toString()}</Typography>
         </Paper>
       </Box>
     </Box>

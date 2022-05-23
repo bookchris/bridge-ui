@@ -2,12 +2,8 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "jsx": "preserve"
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "jsx": "preserve",
     /*
     "allowJs": true,
     "skipLibCheck": true,
@@ -19,8 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true
-    */,
-    "allowJs": true,
+    */ "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
@@ -31,13 +26,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "../bridge-core/src/seat.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

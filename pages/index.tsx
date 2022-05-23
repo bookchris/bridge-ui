@@ -23,15 +23,15 @@ const Home: NextPage = () => {
         {tables.map((t) => (
           <MiniBoard
             key={t.id}
-            hand={t}
-            onClick={() => router.push("/table/" + t.id)}
+            hand={t.hand}
+            onClick={() => router.push("/tables/" + t.id)}
           />
         ))}
       </Box>
       <Box>
         <Button
           onClick={() =>
-            createTable().then((id) => router.push("/table/" + id))
+            createTable().then((id) => router.push("/tables/" + id))
           }
         >
           Create a new table

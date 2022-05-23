@@ -1,3 +1,4 @@
+import { Hand } from "@chrisbook/bridge-core";
 import {
   Box,
   Icon,
@@ -7,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
-import { Hand } from "../lib/hand";
 import { useRedeal } from "../lib/table";
 
 export interface ControlsProps {
@@ -20,12 +20,12 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
   const redeal = useRedeal();
 
   const prev = useCallback(
-    () => setPosition((p) => Math.min(p + 1, hand.positions)),
-    [hand.positions, setPosition]
-  );
-  const next = useCallback(
     () => setPosition((p) => Math.max(0, p - 1)),
     [setPosition]
+  );
+  const next = useCallback(
+    () => setPosition((p) => (p === hand.positions - 1 ? -1 : p + 1)),
+    [hand.positions, setPosition]
   );
 
   useEffect(() => {
@@ -52,8 +52,8 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         <Tooltip title="Hand start">
           <span>
             <IconButton
-              onClick={() => setPosition(hand.positions)}
-              disabled={position === hand.positions}
+              onClick={() => setPosition(0)}
+              disabled={position === 0}
             >
               <Icon>first_page</Icon>
             </IconButton>
@@ -61,7 +61,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         </Tooltip>
         <Tooltip title="Previous">
           <span>
-            <IconButton onClick={prev} disabled={position === hand.positions}>
+            <IconButton onClick={prev} disabled={position === 0}>
               <Icon>navigate_before</Icon>
             </IconButton>
           </span>
@@ -76,8 +76,8 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         <Tooltip title="Live">
           <span>
             <IconButton
-              onClick={() => setPosition(0)}
-              disabled={position === 0}
+              onClick={() => setPosition(-1)}
+              disabled={position === -1}
             >
               <Icon>last_page</Icon>
             </IconButton>
@@ -88,7 +88,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
             <IconButton
               onClick={() => {
                 redeal();
-                setPosition(0);
+                setPosition(-1);
               }}
             >
               <Icon>restart_alt</Icon>

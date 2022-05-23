@@ -1,7 +1,6 @@
-import { Seat } from "@chrisbook/bridge-core";
+import { Bid, Hand, Seat } from "@chrisbook/bridge-core";
 import { Box, Button, ButtonProps, Icon, Paper } from "@mui/material";
 import { useState } from "react";
-import { Hand } from "../lib/hand";
 import { useBid } from "../lib/table";
 
 export interface BidBoxProps {
@@ -10,8 +9,6 @@ export interface BidBoxProps {
 }
 
 export function BidBox({ hand, seat }: BidBoxProps) {
-  const viewer = Seat.South;
-  const dealer = hand.dealer;
   const bidder = hand.nextBidder;
   return (
     <Box
@@ -34,14 +31,13 @@ function BidSelector({ hand, bidder }: { hand: Hand; bidder: Seat }) {
   const [level, setLevel] = useState(0);
 
   const bid = useBid();
-  const bidAs = (b: string) => {
+  const bidAs = (b: Bid) => {
     setLevel(0);
     bid(b, bidder);
   };
 
-  const minLevel = hand.bidding.validBidLevel;
   const bids = hand.bidding.validBids;
-  const isValid = (b: string) => bids.includes(b);
+  const isValid = (b: Bid) => !!bids.find((v) => v.bid === b.bid);
 
   return (
     <Paper sx={{ p: 1 }}>
@@ -51,7 +47,7 @@ function BidSelector({ hand, bidder }: { hand: Hand; bidder: Seat }) {
             key={l}
             variant={level === l ? "outlined" : "contained"}
             onClick={() => setLevel(l)}
-            disabled={!!level || l < minLevel}
+            disabled={!!level || !isValid(new Bid(`${l}NT`))}
             sx={{ minWidth: 0 }}
           >
             {l}
@@ -66,7 +62,7 @@ function BidSelector({ hand, bidder }: { hand: Hand; bidder: Seat }) {
               onClick={() => setLevel(0)}
             />
             {["♣", "♦", "♥", "♠", "NT"].map((suit) => {
-              const bid = `${level}${suit}`;
+              const bid = new Bid(`${level}${suit}`);
               return (
                 <BidButton
                   key={suit}
@@ -82,11 +78,17 @@ function BidSelector({ hand, bidder }: { hand: Hand; bidder: Seat }) {
       ) : (
         <div>
           <Box display="flex">
-            <BidButton onClick={() => bidAs("Pass")}>Pass</BidButton>
-            <BidButton onClick={() => bidAs("X")} disabled={!isValid("X")}>
+            <BidButton onClick={() => bidAs(Bid.Pass)}>Pass</BidButton>
+            <BidButton
+              onClick={() => bidAs(Bid.Double)}
+              disabled={!isValid(Bid.Double)}
+            >
               X
             </BidButton>
-            <BidButton onClick={() => bidAs("XX")} disabled={!isValid("XX")}>
+            <BidButton
+              onClick={() => bidAs(Bid.Redouble)}
+              disabled={!isValid(Bid.Redouble)}
+            >
               XX
             </BidButton>
           </Box>
