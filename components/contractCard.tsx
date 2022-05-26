@@ -1,5 +1,5 @@
+import { Hand } from "@chrisbook/bridge-core";
 import { Box, Paper, Typography } from "@mui/material";
-import { Hand } from "../lib/hand";
 
 export interface ContractCardProps {
   hand: Hand;

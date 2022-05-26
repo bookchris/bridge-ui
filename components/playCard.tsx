@@ -1,4 +1,4 @@
-import { Seat } from "@chrisbook/bridge-core";
+import { Hand, Seat, Trick } from "@chrisbook/bridge-core";
 import {
   Paper,
   Table,
@@ -8,8 +8,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Hand } from "../lib/hand";
-import { Trick } from "../lib/play";
 import { CardText } from "./cardText";
 
 export interface PlayProps {
@@ -18,7 +16,8 @@ export interface PlayProps {
 }
 
 export function Play({ hand, position }: PlayProps) {
-  const highlighted = hand.data.play.length - position;
+  const highlighted =
+    position === -1 ? hand.play.length : position - hand.bids.length;
   const tricks = [...hand.tricks];
 
   if (hand.isPlaying) {
@@ -74,7 +73,9 @@ export function Play({ hand, position }: PlayProps) {
               )
             );
             cols.push(
-              ...Array(4 - cols.length).fill(<TableCell>&nbsp;</TableCell>)
+              ...Array(4 - cols.length).map((_, i) => (
+                <TableCell key={"fill" + i}>&nbsp;</TableCell>
+              ))
             );
             let player = Seat.West;
             while (player != trick.leader) {

@@ -3,11 +3,15 @@ import {
   Box,
   Button,
   CssBaseline,
+  Menu,
+  MenuItem,
   ThemeProvider,
   Toolbar,
   Typography,
 } from "@mui/material";
 import type { AppProps } from "next/app";
+import NextLink from "next/link";
+import { useState } from "react";
 import { ProfileButton } from "../components/profileButton";
 import { theme } from "../components/theme";
 
@@ -25,9 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Button color="inherit" href="/">
               Play
             </Button>
-            <Button color="inherit" href="/analysis">
-              Analyse
-            </Button>
+            <AnalyizeMenu />
             <Box sx={{ flexGrow: 1 }} />
             <ProfileButton />
           </Box>
@@ -48,5 +50,45 @@ function MyApp({ Component, pageProps }: AppProps) {
     </ThemeProvider>
   );
 }
+
+const AnalyizeMenu = () => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  return (
+    <>
+      <Button
+        color="inherit"
+        id="menubutton1"
+        aria-owns={anchorEl ? "analyize-menu" : null}
+        aria-haspopup="true"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        onMouseOver={(e) => setAnchorEl(e.currentTarget)}
+      >
+        Analyse
+      </Button>
+      <Menu
+        id="analyize-menu"
+        anchorEl={anchorEl}
+        open={!!anchorEl}
+        onClose={() => setAnchorEl(undefined)}
+        onClick={() => setAnchorEl(undefined)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <NextLink href="/tournaments" passHref>
+          <MenuItem>Tournaments</MenuItem>
+        </NextLink>
+        <NextLink href="/analysis" passHref>
+          <MenuItem>Import</MenuItem>
+        </NextLink>
+      </Menu>
+    </>
+  );
+};
 
 export default MyApp;
