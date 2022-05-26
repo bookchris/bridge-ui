@@ -20,11 +20,15 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
   const redeal = useRedeal();
 
   const prev = useCallback(
-    () => setPosition((p) => Math.max(0, p - 1)),
-    [setPosition]
+    () =>
+      setPosition((p) => (p === -1 ? hand.positions - 1 : Math.max(0, p - 1))),
+    [hand.positions, setPosition]
   );
   const next = useCallback(
-    () => setPosition((p) => (p === hand.positions - 1 ? -1 : p + 1)),
+    () =>
+      setPosition((p) =>
+        p === -1 ? -1 : p >= hand.positions - 1 ? -1 : p + 1
+      ),
     [hand.positions, setPosition]
   );
 
@@ -68,7 +72,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         </Tooltip>
         <Tooltip title="Next">
           <span>
-            <IconButton onClick={next} disabled={position === 0}>
+            <IconButton onClick={next} disabled={position === -1}>
               <Icon>navigate_next</Icon>
             </IconButton>
           </span>

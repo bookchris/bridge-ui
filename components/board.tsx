@@ -43,7 +43,7 @@ export function Board({ hand, allHands }: BoardProps) {
   const [width] = useSize(ref);
 
   const handAt = hand.atPosition(position);
-  console.log("position", hand, handAt);
+  console.log("position hand", position, hand, handAt);
 
   const set = useMemo(
     () =>
@@ -55,8 +55,8 @@ export function Board({ hand, allHands }: BoardProps) {
   );
 
   const variations = useMemo(
-    () => allHands?.filter((h) => h.board === hand.board),
-    [allHands, hand.board]
+    () => allHands?.filter((h) => h.board === hand.board && h.id !== hand.id),
+    [allHands, hand]
   );
 
   const value = useMemo(

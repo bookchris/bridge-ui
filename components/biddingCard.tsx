@@ -19,7 +19,7 @@ export interface BiddingProps {
 }
 
 export function BiddingCard({ hand, seat, position }: BiddingProps) {
-  const highlighted = hand.bidding.bids.length + hand.play.length - position;
+  //const highlighted = hand.bidding.bids.length + hand.play.length - position;
   const viewer = Seat.South;
   const dealer = hand.dealer;
 
@@ -34,7 +34,7 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
       <TableCell
         key={"bid" + i}
         align="center"
-        sx={{ backgroundColor: i === highlighted ? "grey.300" : undefined }}
+        sx={{ backgroundColor: i === position ? "grey.300" : undefined }}
       >
         <BidText bid={bid} />
       </TableCell>
@@ -44,7 +44,7 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
     bids.push(
       <TableCell
         key="next"
-        sx={{ backgroundColor: position === 0 ? "grey.300" : undefined }}
+        sx={{ backgroundColor: position === -1 ? "grey.300" : undefined }}
       >
         &nbsp;
       </TableCell>

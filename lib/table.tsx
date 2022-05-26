@@ -1,11 +1,4 @@
-import {
-  Bid,
-  Card,
-  Hand,
-  HandJson,
-  HandState,
-  Seat,
-} from "@chrisbook/bridge-core";
+import { Bid, Card, Hand, HandJson, Seat } from "@chrisbook/bridge-core";
 import {
   arrayUnion,
   collection,
@@ -21,9 +14,6 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useTableId } from "../components/table";
 import { db } from "../utils/firebase";
-
-console.log("fromJson", Hand.fromJson);
-console.log("playing", HandState.Playing);
 
 class Table {
   constructor(readonly id: string, readonly hand: Hand) {}

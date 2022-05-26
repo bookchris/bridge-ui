@@ -16,7 +16,8 @@ export interface PlayProps {
 }
 
 export function Play({ hand, position }: PlayProps) {
-  const highlighted = hand.play.length - position;
+  const highlighted =
+    position === -1 ? hand.play.length : position - hand.bids.length;
   const tricks = [...hand.tricks];
 
   if (hand.isPlaying) {
