@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { ReactNode } from "react";
 import { BidText } from "./bidText";
+import { useBoardContext } from "./board";
 import { TableRowGrouper } from "./tableRowGrouper";
 
 export interface BiddingProps {
@@ -19,6 +20,8 @@ export interface BiddingProps {
 }
 
 export function BiddingCard({ hand, seat, position }: BiddingProps) {
+  const { setPosition } = useBoardContext();
+
   //const highlighted = hand.bidding.bids.length + hand.play.length - position;
   const viewer = Seat.South;
   const dealer = hand.dealer;
@@ -32,9 +35,13 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
   hand.bidding.bids.forEach((bid, i) => {
     bids.push(
       <TableCell
+        onClick={() => setPosition(i)}
         key={"bid" + i}
         align="center"
-        sx={{ backgroundColor: i === position ? "grey.300" : undefined }}
+        sx={{
+          backgroundColor: i === position ? "grey.300" : undefined,
+          cursor: "pointer",
+        }}
       >
         <BidText bid={bid} />
       </TableCell>
@@ -44,7 +51,11 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
     bids.push(
       <TableCell
         key="next"
-        sx={{ backgroundColor: position === -1 ? "grey.300" : undefined }}
+        onClick={() => setPosition(undefined)}
+        sx={{
+          backgroundColor: position === hand.positions ? "grey.300" : undefined,
+          cursor: "pointer",
+        }}
       >
         &nbsp;
       </TableCell>

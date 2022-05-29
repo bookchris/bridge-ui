@@ -26,17 +26,24 @@ const TournamentPage: NextPage = () => {
 
   const first = (v: string | string[]) => (Array.isArray(v) ? v[0] : v);
 
+  const position = parseInt(first(query.position));
   return (
-    <TournamentPageContent id={first(query.id)} handId={first(query.hand)} />
+    <TournamentPageContent
+      id={first(query.id)}
+      handId={first(query.hand)}
+      position={isNaN(position) ? undefined : position}
+    />
   );
 };
 
 const TournamentPageContent = ({
   id,
   handId,
+  position,
 }: {
   id: string;
   handId?: string;
+  position?: number;
 }) => {
   const [tournament] = useTournament(id);
   const [players] = useTournamentPlayers(id);
@@ -47,7 +54,7 @@ const TournamentPageContent = ({
   }
   const hand = hands.find((h) => h.id === handId);
   if (hand) {
-    return <Board hand={hand} allHands={hands} />;
+    return <Board hand={hand} allHands={hands} position={position} />;
   }
   return <PlayerList tournament={tournament} hands={hands} players={players} />;
 };

@@ -8,6 +8,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useBoardContext } from "./board";
 import { CardText } from "./cardText";
 
 export interface PlayProps {
@@ -16,8 +17,9 @@ export interface PlayProps {
 }
 
 export function Play({ hand, position }: PlayProps) {
-  const highlighted =
-    position === -1 ? hand.play.length : position - hand.bids.length;
+  const { setPosition } = useBoardContext();
+
+  const highlighted = position - hand.bids.length;
   const tricks = [...hand.tricks];
 
   if (hand.isPlaying) {
@@ -48,10 +50,12 @@ export function Play({ hand, position }: PlayProps) {
             let cols = trick.cards.map((card, j) => (
               <TableCell
                 key={card.id}
+                onClick={() => setPosition(i * 4 + j + hand.bids.length)}
                 align="center"
                 sx={{
                   backgroundColor:
                     i * 4 + j === highlighted ? "grey.300" : undefined,
+                  cursor: "pointer",
                 }}
               >
                 <CardText card={card} />

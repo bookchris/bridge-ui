@@ -1,4 +1,11 @@
-import { Bid, Card, Hand, HandJson, Seat } from "@chrisbook/bridge-core";
+import {
+  Bid,
+  Card,
+  Hand,
+  HandJson,
+  Seat,
+  Vulnerability,
+} from "@chrisbook/bridge-core";
 import {
   arrayUnion,
   collection,
@@ -69,12 +76,14 @@ export function useTableList(): [
 export function useCreateTable() {
   return useCallback(async () => {
     const ref = doc(collection(db, "tables"));
-    await setDoc(ref, {
+    const data: HandJson = {
       dealer: Seat.South.toJson(),
+      vulnerability: Vulnerability.None.toJson(),
       deal: generateDeal(),
       bidding: [],
       play: [],
-    });
+    };
+    await setDoc(ref, data);
     return ref.id;
   }, []);
 }

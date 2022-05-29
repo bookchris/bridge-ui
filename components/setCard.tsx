@@ -1,6 +1,5 @@
 import { Hand } from "@chrisbook/bridge-core";
 import {
-  Link,
   Paper,
   Table,
   TableBody,
@@ -9,8 +8,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useBoardContext } from "./board";
 
 export interface SetCardProps {
   hand: Hand;
@@ -18,7 +17,8 @@ export interface SetCardProps {
 }
 
 export function SetCard({ hand, set }: SetCardProps) {
-  const { query, pathname } = useRouter();
+  const { push, query, pathname } = useRouter();
+  const { setPosition } = useBoardContext();
   return (
     <Paper square>
       <Paper square elevation={0} sx={{ backgroundColor: "secondary.main" }}>
@@ -35,20 +35,20 @@ export function SetCard({ hand, set }: SetCardProps) {
         <TableBody>
           {set.map((h) => (
             <TableRow
+              hover
+              onClick={() => {
+                const newQuery = { ...query, hand: h.id };
+                delete newQuery["position"];
+                push({ pathname: pathname, query: newQuery });
+              }}
               key={h.id}
               sx={{
                 backgroundColor:
                   h.board === hand.board ? "grey.300" : undefined,
+                cursor: "pointer",
               }}
             >
-              <TableCell>
-                <NextLink
-                  href={{ pathname: pathname, query: { ...query, hand: h.id } }}
-                  passHref
-                >
-                  <Link>{h.board}</Link>
-                </NextLink>
-              </TableCell>
+              <TableCell>{h.board}</TableCell>
               <TableCell>{h.bidding.contract.toString()}</TableCell>
               <TableCell>{h.result}</TableCell>
             </TableRow>

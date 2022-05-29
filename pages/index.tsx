@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         Join a table
       </Typography>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", width: "900px", gap: 2 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", width: "800px", gap: 2 }}>
         {tables.map((t) => (
           <MiniBoard
             key={t.id}

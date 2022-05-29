@@ -1,7 +1,14 @@
 import { Hand, HandState, Seat } from "@chrisbook/bridge-core";
 import { Box, Paper, useMediaQuery, useTheme } from "@mui/material";
 import useSize from "@react-hook/size";
-import { createContext, useContext, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useMemo,
+  useRef,
+} from "react";
 import { BidBox } from "./bidBox";
 import { BiddingCard } from "./biddingCard";
 import { ContractCard } from "./contractCard";
@@ -9,6 +16,7 @@ import { Controls } from "./controls";
 import { Holding } from "./holding";
 import { Play } from "./playCard";
 import { PlayerBox } from "./playerBox";
+import { usePosition } from "./position";
 import { ScoreBox } from "./scoreBox";
 import { SetCard } from "./setCard";
 import { Trick } from "./trick";
@@ -17,6 +25,7 @@ import { VariationsCard } from "./variationsCard";
 interface BoardContextType {
   hand: Hand;
   position: number;
+  setPosition: Dispatch<SetStateAction<number>>;
   handAt: Hand;
   width: number;
   scale: number;
@@ -29,11 +38,13 @@ export const useBoardContext = () => useContext(BoardContext);
 export interface BoardProps {
   hand: Hand;
   allHands?: Hand[];
+  live?: boolean;
+  position?: number;
 }
 
-export function Board({ hand, allHands }: BoardProps) {
-  const [position, setPosition] = useState(-1);
-  const readOnly = position !== -1;
+export function Board({ hand, allHands, live }: BoardProps) {
+  const { position, setPosition } = usePosition(hand);
+  const readOnly = position !== hand.positions || !live;
 
   const theme = useTheme();
   const isLg = useMediaQuery(theme.breakpoints.up("lg"));
@@ -43,7 +54,6 @@ export function Board({ hand, allHands }: BoardProps) {
   const [width] = useSize(ref);
 
   const handAt = hand.atPosition(position);
-  console.log("position hand", position, hand, handAt);
 
   const set = useMemo(
     () =>
@@ -55,7 +65,7 @@ export function Board({ hand, allHands }: BoardProps) {
   );
 
   const variations = useMemo(
-    () => allHands?.filter((h) => h.board === hand.board && h.id !== hand.id),
+    () => allHands?.filter((h) => h.board === hand.board),
     [allHands, hand]
   );
 
@@ -66,8 +76,9 @@ export function Board({ hand, allHands }: BoardProps) {
       hand: hand,
       handAt: handAt,
       position: position,
+      setPosition: setPosition,
     }),
-    [width, hand, handAt, position]
+    [width, hand, handAt, position, setPosition]
   );
 
   const left = (
@@ -102,7 +113,7 @@ export function Board({ hand, allHands }: BoardProps) {
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                minWidth: 300,
+                minWidth: 400,
               }}
             >
               {left}
@@ -112,8 +123,8 @@ export function Board({ hand, allHands }: BoardProps) {
             ref={ref}
             sx={{
               backgroundColor: "#378B05",
-              width: "min(100vmin, 900px);",
-              height: "min(100vmin, 900px);",
+              width: "min(100vmin, 800px);",
+              height: "min(100vmin, 800px);",
               position: "relative",
             }}
           >
@@ -149,7 +160,7 @@ export function Board({ hand, allHands }: BoardProps) {
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            width: width /*"min(100vw, 900px);"*/,
+            width: width,
             mt: 2,
           }}
         >
@@ -174,7 +185,8 @@ export function MiniBoard({ hand, onClick = () => {} }: MiniBoardProps) {
       scale: width / 900,
       hand: hand,
       handAt: hand,
-      position: -1,
+      position: hand.positions,
+      setPosition: () => {},
     }),
     [width, hand]
   );
