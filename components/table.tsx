@@ -14,7 +14,7 @@ export function Table({ id }: { id: string }) {
 
   return (
     <TableContext.Provider value={id}>
-      <Board hand={table.hand} />
+      <Board hand={table.hand} live />
     </TableContext.Provider>
   );
 }

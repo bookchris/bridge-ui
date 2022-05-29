@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { useRedeal } from "../lib/table";
+import { useTableId } from "./table";
 
 export interface ControlsProps {
   hand: Hand;
@@ -18,17 +19,22 @@ export interface ControlsProps {
 
 export function Controls({ hand, position, setPosition }: ControlsProps) {
   const redeal = useRedeal();
+  const tableId = useTableId();
 
   const prev = useCallback(
-    () =>
-      setPosition((p) => (p === -1 ? hand.positions - 1 : Math.max(0, p - 1))),
-    [hand.positions, setPosition]
+    () => setPosition((p) => Math.max(0, p - 1)),
+    [setPosition]
   );
   const next = useCallback(
-    () =>
-      setPosition((p) =>
-        p === -1 ? -1 : p >= hand.positions - 1 ? -1 : p + 1
-      ),
+    () => setPosition((p) => Math.min(hand.positions, p + 1)),
+    [hand.positions, setPosition]
+  );
+  const prevSeat = useCallback(
+    () => setPosition((p) => (p - 4 >= 0 ? p - 4 : p)),
+    [setPosition]
+  );
+  const nextSeat = useCallback(
+    () => setPosition((p) => (p + 4 <= hand.positions ? p + 4 : p)),
     [hand.positions, setPosition]
   );
 
@@ -41,11 +47,17 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         case "ArrowRight":
           next();
           break;
+        case "ArrowUp":
+          prevSeat();
+          break;
+        case "ArrowDown":
+          nextSeat();
+          break;
       }
     };
     document.addEventListener("keydown", onKeyPress);
     return () => document.removeEventListener("keydown", onKeyPress);
-  }, [next, prev]);
+  }, [next, nextSeat, prev, prevSeat]);
 
   return (
     <Paper square>
@@ -63,6 +75,13 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
             </IconButton>
           </span>
         </Tooltip>
+        <Tooltip title="Previous in seat">
+          <span>
+            <IconButton onClick={prevSeat} disabled={position - 4 < 0}>
+              <Icon>expand_less</Icon>
+            </IconButton>
+          </span>
+        </Tooltip>
         <Tooltip title="Previous">
           <span>
             <IconButton onClick={prev} disabled={position === 0}>
@@ -73,32 +92,44 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         <Tooltip title="Next">
           <span>
             <IconButton onClick={next} disabled={position === -1}>
-              <Icon>navigate_next</Icon>
+              <Icon>chevron_right</Icon>
             </IconButton>
           </span>
         </Tooltip>
-        <Tooltip title="Live">
+        <Tooltip title="Next in seat">
           <span>
             <IconButton
-              onClick={() => setPosition(-1)}
-              disabled={position === -1}
+              onClick={nextSeat}
+              disabled={position + 4 > hand.positions}
+            >
+              <Icon>expand_more</Icon>
+            </IconButton>
+          </span>
+        </Tooltip>
+        <Tooltip title={tableId ? "Live" : "Hand end"}>
+          <span>
+            <IconButton
+              onClick={() => setPosition(hand.positions)}
+              disabled={position === hand.positions}
             >
               <Icon>last_page</Icon>
             </IconButton>
           </span>
         </Tooltip>
-        <Tooltip title="Redeal">
-          <span>
-            <IconButton
-              onClick={() => {
-                redeal();
-                setPosition(-1);
-              }}
-            >
-              <Icon>restart_alt</Icon>
-            </IconButton>
-          </span>
-        </Tooltip>
+        {tableId && (
+          <Tooltip title="Redeal">
+            <span>
+              <IconButton
+                onClick={() => {
+                  redeal();
+                  setPosition(0);
+                }}
+              >
+                <Icon>restart_alt</Icon>
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
       </Box>
     </Paper>
   );
