@@ -4,18 +4,18 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "public": "out",
     "cleanUrls": true,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
-        "source": "**",
-        "function": "nextjsFunc"
+        "source": "/tournaments/*",
+        "destination": "/tournaments/[id].html"
+      },
+      {
+        "source": "/tables/*",
+        "destination": "/tables/[id].html"
       }
     ]
-  },
-  "functions": {
-    "source": ".",
-    "predeploy": ["npm install", "npm run build"],
-    "runtime": "nodejs16"
   }
 }

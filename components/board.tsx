@@ -209,6 +209,7 @@ export function MiniBoard({ hand, onClick = () => {} }: MiniBoardProps) {
         width: `${width}px`,
         height: `${width}px`,
         position: "relative",
+        cursor: "pointer",
       }}
     >
       <BoardContext.Provider value={value}>
