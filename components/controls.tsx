@@ -29,13 +29,15 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
     () => setPosition((p) => Math.min(hand.positions, p + 1)),
     [hand.positions, setPosition]
   );
+  const prevPosition = hand.previousTurn(position);
   const prevSeat = useCallback(
-    () => setPosition((p) => (p - 4 >= 0 ? p - 4 : p)),
-    [setPosition]
+    () => setPosition((p) => (prevPosition >= 0 ? prevPosition : p)),
+    [prevPosition, setPosition]
   );
+  const nextPosition = hand.nextTurn(position);
   const nextSeat = useCallback(
-    () => setPosition((p) => (p + 4 <= hand.positions ? p + 4 : p)),
-    [hand.positions, setPosition]
+    () => setPosition((p) => (nextPosition >= 0 ? nextPosition : p)),
+    [nextPosition, setPosition]
   );
 
   useEffect(() => {
@@ -77,7 +79,7 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
         </Tooltip>
         <Tooltip title="Previous in seat">
           <span>
-            <IconButton onClick={prevSeat} disabled={position - 4 < 0}>
+            <IconButton onClick={prevSeat} disabled={prevPosition === -1}>
               <Icon>expand_less</Icon>
             </IconButton>
           </span>

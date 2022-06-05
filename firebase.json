@@ -4,8 +4,18 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "out",
     "cleanUrls": true,
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "nextjsFunc"
+      }
+    ]
+  },
+  "functions": {
+    "source": ".",
+    "predeploy": ["npm install", "npm run build"],
+    "runtime": "nodejs16"
   }
 }

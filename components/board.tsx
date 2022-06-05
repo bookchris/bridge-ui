@@ -81,16 +81,14 @@ export function Board({ hand, allHands, live }: BoardProps) {
     [width, hand, handAt, position, setPosition]
   );
 
-  const left = (
-    <>
-      {set && <SetCard hand={hand} set={set} />}
-      {set && <VariationsCard variations={variations} />}
-    </>
+  const setCard = <>{set && <SetCard hand={hand} set={set} />}</>;
+  const variationCard = (
+    <>{set && <VariationsCard variations={variations} />}</>
   );
   const right = (
     <>
       <Controls hand={hand} position={position} setPosition={setPosition} />
-      {!set && <ContractCard hand={handAt} />}
+      <ContractCard />
       <BiddingCard hand={hand} position={position} />
       {!hand.isBidding && <Play hand={hand} position={position} />}
     </>
@@ -116,32 +114,46 @@ export function Board({ hand, allHands, live }: BoardProps) {
                 minWidth: 400,
               }}
             >
-              {left}
+              {setCard}
+              {variationCard}
             </Box>
           )}
-          <Paper
-            ref={ref}
+          <Box
             sx={{
-              backgroundColor: "#378B05",
-              width: "min(100vmin, 800px);",
-              height: "min(100vmin, 800px);",
-              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
             }}
           >
-            <Holding seat={Seat.North} cards={handAt.north} />
-            <Holding seat={Seat.West} cards={handAt.west} />
-            <Holding seat={Seat.East} cards={handAt.east} />
-            <Holding seat={Seat.South} cards={handAt.south} />
-            <PlayerBox seat={Seat.South} />
-            <PlayerBox seat={Seat.North} />
-            <PlayerBox seat={Seat.East} />
-            <PlayerBox seat={Seat.West} />
-            {!readOnly && handAt.state === HandState.Bidding && (
-              <BidBox hand={handAt} />
-            )}
-            {handAt.state === HandState.Playing && <Trick hand={handAt} />}
-            {handAt.state === HandState.Complete && <ScoreBox hand={handAt} />}
-          </Paper>
+            <Paper
+              ref={ref}
+              sx={{
+                backgroundColor: "#378B05",
+                width: "min(100vmin, 800px);",
+                height: "min(100vmin, 800px);",
+                position: "relative",
+              }}
+            >
+              <Holding seat={Seat.North} cards={handAt.north} />
+              <Holding seat={Seat.West} cards={handAt.west} />
+              <Holding seat={Seat.East} cards={handAt.east} />
+              <Holding seat={Seat.South} cards={handAt.south} />
+              <PlayerBox seat={Seat.South} />
+              <PlayerBox seat={Seat.North} />
+              <PlayerBox seat={Seat.East} />
+              <PlayerBox seat={Seat.West} />
+              {!readOnly && handAt.state === HandState.Bidding && (
+                <BidBox hand={handAt} />
+              )}
+              {handAt.state === HandState.Playing && <Trick hand={handAt} />}
+              {handAt.state === HandState.Complete && (
+                <ScoreBox hand={handAt} />
+              )}
+            </Paper>
+            {!isXl && variationCard}
+            {!isLg && setCard}
+            {!isLg && right}
+          </Box>
           {isLg && (
             <Box
               sx={{
@@ -152,6 +164,7 @@ export function Board({ hand, allHands, live }: BoardProps) {
               }}
             >
               {right}
+              {isLg && !isXl && setCard}
             </Box>
           )}
         </Box>
@@ -163,10 +176,7 @@ export function Board({ hand, allHands, live }: BoardProps) {
             width: width,
             mt: 2,
           }}
-        >
-          {!isXl && left}
-          {!isLg && right}
-        </Box>
+        ></Box>
       </BoardContext.Provider>
     </div>
   );
