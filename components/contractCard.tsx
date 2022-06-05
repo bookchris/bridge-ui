@@ -1,11 +1,8 @@
-import { Hand } from "@chrisbook/bridge-core";
-import { Box, Paper, Typography } from "@mui/material";
+import { Paper, Table, TableCell, TableRow, Typography } from "@mui/material";
+import { useBoardContext } from "./board";
 
-export interface ContractCardProps {
-  hand: Hand;
-}
-
-export function ContractCard({ hand }: ContractCardProps) {
+export function ContractCard() {
+  const { hand, handAt } = useBoardContext();
   const contract = hand.bidding.contract;
   if (!contract) return <div />;
   return (
@@ -13,9 +10,20 @@ export function ContractCard({ hand }: ContractCardProps) {
       <Paper square elevation={0} sx={{ backgroundColor: "secondary.main" }}>
         <Typography sx={{ p: 1, color: "white" }}>Hand</Typography>
       </Paper>
-      <Box sx={{ m: 1 }}>
-        {!hand.isBidding && <>Contract: {hand.bidding.contract}</>}
-      </Box>
+      <Table size="small">
+        <TableRow>
+          <TableCell>Contract</TableCell>
+          <TableCell>{contract}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>N/S</TableCell>
+          <TableCell>{handAt.northSouthTricks}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>E/W</TableCell>
+          <TableCell>{handAt.eastWestTricks}</TableCell>
+        </TableRow>
+      </Table>
     </Paper>
   );
 }

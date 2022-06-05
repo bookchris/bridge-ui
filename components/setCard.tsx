@@ -1,4 +1,4 @@
-import { Hand } from "@chrisbook/bridge-core";
+import { Hand, Seat } from "@chrisbook/bridge-core";
 import {
   Paper,
   Table,
@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useBoardContext } from "./board";
+import { ResultText } from "./resultText";
 
 export interface SetCardProps {
   hand: Hand;
@@ -30,6 +31,7 @@ export function SetCard({ hand, set }: SetCardProps) {
             <TableCell></TableCell>
             <TableCell>Contract</TableCell>
             <TableCell>Result</TableCell>
+            <TableCell>Score</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -50,7 +52,10 @@ export function SetCard({ hand, set }: SetCardProps) {
             >
               <TableCell>{h.board}</TableCell>
               <TableCell>{h.bidding.contract.toString()}</TableCell>
-              <TableCell>{h.result}</TableCell>
+              <TableCell>
+                <ResultText result={h.result} />
+              </TableCell>
+              <TableCell>{h.scoreAs(Seat.South)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

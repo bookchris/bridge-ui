@@ -1,5 +1,6 @@
-import { Hand } from "@chrisbook/bridge-core";
+import { Hand, Seat } from "@chrisbook/bridge-core";
 import { Paper, Typography } from "@mui/material";
+import { ResultText } from "./resultText";
 
 export interface ScoreBoxProps {
   hand: Hand;
@@ -18,10 +19,10 @@ export function ScoreBox({ hand }: ScoreBoxProps) {
       }}
     >
       <Typography paragraph>
-        Result: {hand.bidding.contract}{" "}
-        {hand.result >= 0 ? `+${hand.result}` : hand.result}
+        {hand.bidding.contract}&nbsp;
+        <ResultText result={hand.result} />
       </Typography>
-      <Typography paragraph>Score: {hand.score}</Typography>
+      <Typography paragraph>Score: {hand.scoreAs(Seat.South)}</Typography>
     </Paper>
   );
 }
