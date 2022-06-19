@@ -12,7 +12,7 @@ export interface HoldingProps {
 export function Holding({ seat, cards }: HoldingProps) {
   const play = usePlay();
   const { width } = useBoardContext();
-  const margin = width / 9.375;
+  const margin = width / 13;
 
   const paperSx = {
     [Seat.West.toString()]: {

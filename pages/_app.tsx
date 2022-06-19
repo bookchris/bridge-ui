@@ -8,6 +8,7 @@ import {
   ThemeProvider,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import type { AppProps } from "next/app";
 import NextLink from "next/link";
@@ -16,6 +17,7 @@ import { ProfileButton } from "../components/profileButton";
 import { theme } from "../components/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const isSm = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <ThemeProvider theme={theme}>
       <title>Bridge</title>
@@ -23,13 +25,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AppBar position="absolute" color="secondary" elevation={0}>
         <Toolbar>
           <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
-            <Typography variant="h4" color="inherit" noWrap sx={{ pr: 10 }}>
+            <Typography variant="h4" color="inherit" noWrap sx={{ pr: 4 }}>
               bridge
             </Typography>
-            <Button color="inherit" href="/">
-              Play
-            </Button>
-            <AnalyizeMenu />
+            {isSm && (
+              <>
+                <Button color="inherit" href="/">
+                  Play
+                </Button>
+                <AnalyizeMenu />
+              </>
+            )}
             <Box sx={{ flexGrow: 1 }} />
             <ProfileButton />
           </Box>
@@ -42,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          mt: 2,
+          mt: { sm: 2 },
         }}
       >
         <Component {...pageProps} />

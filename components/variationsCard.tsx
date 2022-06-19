@@ -60,7 +60,7 @@ export function VariationsCard({ variations }: VariationsCardProps) {
           .atPosition(position + 1)
           .lastAction()
           .toString();
-        const score = h.score;
+        const score = h.scoreAs(Seat.South);
         const player = h.players[0].toString();
         if (notable.includes(player)) {
           const actionEntry = m[action] || {};
