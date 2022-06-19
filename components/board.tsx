@@ -47,6 +47,7 @@ export function Board({ hand, allHands, live }: BoardProps) {
   const readOnly = position !== hand.positions || !live;
 
   const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.up("sm"));
   const isLg = useMediaQuery(theme.breakpoints.up("lg"));
   const isXl = useMediaQuery(theme.breakpoints.up("xl"));
 
@@ -127,10 +128,14 @@ export function Board({ hand, allHands, live }: BoardProps) {
           >
             <Paper
               ref={ref}
+              square={!isSm}
               sx={{
                 backgroundColor: "#378B05",
-                width: "min(100vmin, 800px);",
-                height: "min(100vmin, 800px);",
+                width: {
+                  xs: "100vmin",
+                  sm: "min(100vmin, 800px);",
+                },
+                height: "min(85vmin, 680px);",
                 position: "relative",
               }}
             >

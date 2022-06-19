@@ -1,8 +1,6 @@
 import { Hand, Seat } from "@chrisbook/bridge-core";
 import { Card2 } from "./card";
 
-const OFFSET = "32%";
-
 export interface TrickProps {
   hand: Hand;
   seat?: Seat; // When specified, limits when you can.
@@ -14,24 +12,24 @@ export function Trick({ hand, seat }: TrickProps) {
 
   const seatSxProps = {
     [Seat.West.toString()]: {
-      left: OFFSET,
+      left: "50%",
       top: "50%",
-      transform: "translate(0, -45%)",
+      transform: "translate(-90%, -45%)",
     },
     [Seat.North.toString()]: {
-      top: OFFSET,
+      top: "50%",
       left: "50%",
-      transform: "translate(-55%)",
+      transform: "translate(-53%, -80%)",
     },
     [Seat.East.toString()]: {
-      right: OFFSET,
       top: "50%",
-      transform: "translate(0, -55%)",
+      left: "50%",
+      transform: "translate(-10%, -55%)",
     },
     [Seat.South.toString()]: {
-      bottom: OFFSET,
+      top: "50%",
       left: "50%",
-      transform: "translate(-45%)",
+      transform: "translate(-47%, -20%)",
     },
   };
   return (
