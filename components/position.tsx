@@ -1,14 +1,15 @@
 import { Hand } from "@chrisbook/bridge-core";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-import { useTableId } from "./table";
+import { useTableContext } from "./table";
 
 export const usePosition = (hand: Hand) => {
   const { push, query, pathname } = useRouter();
-  const tableId = useTableId();
+  const { tableId } = useTableContext();
 
-  const first = (v: string | string[]) => (Array.isArray(v) ? v[0] : v);
-  let position = parseInt(first(query.position));
+  const first = (v: string | string[] | undefined) =>
+    Array.isArray(v) ? v[0] : v;
+  let position = parseInt(first(query.position) || "");
   if (isNaN(position)) position = tableId ? hand.positions : 0;
 
   const setPosition = useCallback(

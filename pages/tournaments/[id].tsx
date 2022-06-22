@@ -13,10 +13,10 @@ import type { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { Board } from "../../components/board";
+import { useTournamentHands } from "../../lib/hand";
 import {
   Tournament,
   useTournament,
-  useTournamentHands,
   useTournamentPlayers,
 } from "../../lib/tournament";
 
@@ -24,12 +24,13 @@ const TournamentPage: NextPage = () => {
   const { query, isReady } = useRouter();
   if (!isReady) return <div />;
 
-  const first = (v: string | string[]) => (Array.isArray(v) ? v[0] : v);
+  const first = (v: string | string[] | undefined) =>
+    Array.isArray(v) ? v[0] : v;
 
-  const position = parseInt(first(query.position));
+  const position = parseInt(first(query.position) || "");
   return (
     <TournamentPageContent
-      id={first(query.id)}
+      id={query.id as string}
       handId={first(query.hand)}
       position={isNaN(position) ? undefined : position}
     />

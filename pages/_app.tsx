@@ -64,8 +64,8 @@ const AnalyizeMenu = () => {
       <Button
         color="inherit"
         id="menubutton1"
-        aria-owns={anchorEl ? "analyize-menu" : null}
-        aria-haspopup="true"
+        //aria-owns={anchorEl ? "analyize-menu" : null}
+        //aria-haspopup="true"
         onClick={(e) => setAnchorEl(e.currentTarget)}
         onMouseOver={(e) => setAnchorEl(e.currentTarget)}
       >

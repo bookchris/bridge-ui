@@ -1,15 +1,31 @@
 import { Seat } from "@chrisbook/bridge-core";
 import { Box, Paper, Typography } from "@mui/material";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useSit } from "../lib/table";
+import { useUser } from "../lib/user";
+import { auth } from "../utils/firebase";
 import { useBoardContext } from "./board";
+import { useTableContext } from "./table";
 
 export interface PlayerBoxProps {
   seat: Seat;
 }
 
 export function PlayerBox({ seat }: PlayerBoxProps) {
+  const { table } = useTableContext();
   const { scale, handAt } = useBoardContext();
+  const [user] = useAuthState(auth);
+  const sit = useSit(seat);
 
-  const player = handAt.players[Object.values(Seat).indexOf(seat)] || "Unknown";
+  const index = Object.values(Seat).indexOf(seat);
+  const [tableUser] = useUser(table?.players?.[index]);
+
+  let player = "";
+  if (table) {
+    player = tableUser?.displayName || "";
+  } else {
+    player = handAt.players[index].toString() || seat.toString();
+  }
   const isTurn = handAt.turn === seat;
 
   const paperSx = {
@@ -66,15 +82,17 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
         <Paper
           square
           elevation={0}
+          onClick={() => user && sit(user?.uid)}
           sx={{
             px: 1,
             flexGrow: 1,
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: isTurn ? "info.dark" : "secondary.main",
+            cursor: "pointer",
           }}
         >
-          <Typography sx={{ color: "white" }}>{player.toString()}</Typography>
+          <Typography sx={{ color: "white" }}>{player}</Typography>
         </Paper>
       </Box>
     </Box>

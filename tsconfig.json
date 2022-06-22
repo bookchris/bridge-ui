@@ -2,22 +2,14 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
+    /*
+    "module": "esnext", 
+    */
     "lib": ["dom", "dom.iterable", "esnext"],
     "jsx": "preserve",
-    /*
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true
-    */ "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,

@@ -1,20 +1,34 @@
-import { createContext, useContext } from "react";
-import { useTable } from "../lib/table";
+import { createContext, useContext, useMemo } from "react";
+import { useTableHand } from "../lib/hand";
+import { Table, useTable } from "../lib/table";
 import { Board } from "./board";
 
-const TableContext = createContext("");
-export const useTableId = () => useContext(TableContext);
+interface TableContextType {
+  tableId?: string;
+  handId?: string;
+  table?: Table;
+}
+
+const TableContext = createContext<TableContextType>({});
+
+export const useTableContext = () => useContext(TableContext);
 
 export function Table({ id }: { id: string }) {
-  const [table, loading, error] = useTable(id);
+  const [table] = useTable(id);
+  const [hand] = useTableHand(id, table?.handId);
 
-  if (!table) {
+  const value = useMemo(
+    () => ({ tableId: table?.id, handId: table?.handId, table: table }),
+    [table]
+  );
+
+  if (!table || !hand) {
     return <div>Loading...</div>;
   }
 
   return (
-    <TableContext.Provider value={id}>
-      <Board hand={table.hand} live />
+    <TableContext.Provider value={value}>
+      <Board hand={hand} live />
     </TableContext.Provider>
   );
 }

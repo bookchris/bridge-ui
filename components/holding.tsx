@@ -1,6 +1,6 @@
 import { Card, Seat } from "@chrisbook/bridge-core";
 import { Box } from "@mui/material";
-import { usePlay } from "../lib/table";
+import { usePlay } from "../lib/hand";
 import { useBoardContext } from "./board";
 import { Card2 } from "./card";
 
@@ -11,7 +11,7 @@ export interface HoldingProps {
 
 export function Holding({ seat, cards }: HoldingProps) {
   const play = usePlay();
-  const { width } = useBoardContext();
+  const { width, hand } = useBoardContext();
   const margin = width / 13;
 
   const paperSx = {
@@ -42,8 +42,9 @@ export function Holding({ seat, cards }: HoldingProps) {
   return (
     <Box sx={{ display: "flex", position: "absolute", zIndex: 1, ...paperSx }}>
       <Box sx={{ mr: `${margin}px` }} />
-      {cards?.map((card, index) => (
+      {cards?.map((card) => (
         <Card2
+          enabled={hand.canPlay(card, seat)}
           key={card.id}
           card={card}
           onClick={() => play(card, seat)}

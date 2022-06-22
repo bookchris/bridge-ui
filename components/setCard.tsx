@@ -39,7 +39,7 @@ export function SetCard({ hand, set }: SetCardProps) {
             <TableRow
               hover
               onClick={() => {
-                const newQuery = { ...query, hand: h.id };
+                const newQuery: any = { ...query, hand: h.id };
                 delete newQuery["position"];
                 push({ pathname: pathname, query: newQuery });
               }}

@@ -8,8 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
-import { useRedeal } from "../lib/table";
-import { useTableId } from "./table";
+import { useRedeal } from "../lib/hand";
+import { useTableContext } from "./table";
 
 export interface ControlsProps {
   hand: Hand;
@@ -19,7 +19,7 @@ export interface ControlsProps {
 
 export function Controls({ hand, position, setPosition }: ControlsProps) {
   const redeal = useRedeal();
-  const tableId = useTableId();
+  const { tableId } = useTableContext();
 
   const prev = useCallback(
     () => setPosition((p) => Math.max(0, p - 1)),
