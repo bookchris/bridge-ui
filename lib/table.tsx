@@ -1,171 +1,104 @@
+import { Hand, Seat } from "@chrisbook/bridge-core";
 import {
-  Bid,
-  Card,
-  Hand,
-  HandJson,
-  Seat,
-  Vulnerability,
-} from "@chrisbook/bridge-core";
-import {
-  arrayUnion,
   collection,
   doc,
+  DocumentData,
   DocumentReference,
+  FirestoreDataConverter,
   getDoc,
-  onSnapshot,
-  query,
   QueryDocumentSnapshot,
-  setDoc,
+  runTransaction,
+  SnapshotOptions,
   updateDoc,
+  WithFieldValue,
 } from "firebase/firestore";
-import { useCallback, useEffect, useState } from "react";
-import { useTableId } from "../components/table";
+import { useCallback } from "react";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
+import { useTableContext } from "../components/table";
 import { db } from "../utils/firebase";
 
-class Table {
-  constructor(readonly id: string, readonly hand: Hand) {}
+export interface Table {
+  id: string;
+  players?: string[];
+  handId: string;
 }
+
+const tableConverter: FirestoreDataConverter<Table> = {
+  toFirestore(tournament: WithFieldValue<Table>): DocumentData {
+    return tournament;
+  },
+  fromFirestore(
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions
+  ): Table {
+    return {
+      ...(snapshot.data(options) as Table),
+      id: snapshot.id,
+    };
+  },
+};
 
 export function tableDoc(id: string) {
-  return doc(db, "tables", id);
+  return doc(db, "tables", id).withConverter(tableConverter);
 }
 
-export function useTable(
-  id: string
-): [Table | undefined, boolean, Error | undefined] {
-  const [table, setTable] = useState<Table>();
-  const [error, setError] = useState<Error>();
-  useEffect(() => {
-    const unsub = onSnapshot(
-      tableDoc(id),
-      (d) => {
-        setTable(new Table(d.id, Hand.fromJson(d.data() as HandJson)));
-        return () => unsub();
-      },
-      setError
-    );
-  }, [id]);
-  return [table, !table && !error, error];
+export function tableCollection() {
+  return collection(db, "tables").withConverter(tableConverter);
 }
 
-export function useTableList(): [
-  Table[] | undefined,
-  boolean,
-  Error | undefined
-] {
-  const [tables, setTables] = useState<Table[]>();
-  const [error, setError] = useState<Error>();
-  useEffect(() => {
-    const q = query(collection(db, "tables"));
-    const unsub = onSnapshot(
-      q,
-      (qs) => {
-        const tables = [] as Table[];
-        qs.forEach((doc) => {
-          tables.push(new Table(doc.id, Hand.fromJson(doc.data() as HandJson)));
-        });
-        setTables(tables);
-        return () => unsub();
-      },
-      setError
-    );
-  }, []);
-  return [tables, !tables && !error, error];
+export function useTable(id: string) {
+  return useDocumentData<Table>(tableDoc(id));
+}
+
+export function useTableList() {
+  return useCollectionData<Table>(tableCollection());
 }
 
 export function useCreateTable() {
   return useCallback(async () => {
-    const ref = doc(collection(db, "tables"));
-    const data: HandJson = {
-      dealer: Seat.South.toJson(),
-      vulnerability: Vulnerability.None.toJson(),
-      deal: generateDeal(),
-      bidding: [],
-      play: [],
-    };
-    await setDoc(ref, data);
-    return ref.id;
+    await runTransaction(db, async (tx) => {
+      const tableRef = doc(collection(db, "tables"));
+      await tx.set(tableRef, {});
+      const handRef = doc(collection(db, "tables", tableRef.id, "hands"));
+      await tx.set(handRef, Hand.fromDeal().toJson());
+      await tx.set(tableRef, { handId: handRef.id });
+      return tableRef.id;
+    });
   }, []);
 }
 
-export function useBid() {
-  const tableId = useTableId();
+export function useSit(seat: Seat) {
+  const { tableId } = useTableContext();
   return useCallback(
-    async (bid: Bid, seat: Seat) => {
+    async (uid: string) => {
       const [ref, _, table] = await get(tableId);
-      const newHand = table.hand.doBid(bid, seat);
-      if (newHand) {
-        await updateDoc(ref, newHand.toJson());
+      if (table.players?.[seat.index()]) {
+        throw new Error("Seat is already taken");
       }
-    },
-    [tableId]
-  );
-}
-
-export function usePlay() {
-  const tableId = useTableId();
-  return useCallback(
-    async (card: Card, seat: Seat) => {
-      const [ref, _, table] = await get(tableId);
-      const hand = table.hand;
-      if (!hand.isPlaying) throw new Error("Not in playing state");
-      if (hand.player != seat) throw new Error(`Not ${seat}'s turn to play`);
-      const holding = hand.getHolding(seat);
-      if (!holding.find((c) => c.id === card.id))
-        throw new Error(`${seat} doesn't have card ${card}`);
-      const lastTrick = hand.tricks.at(-1);
-      if (lastTrick && !lastTrick.complete) {
-        const lead = lastTrick.cards[0];
-        if (
-          card.suit !== lead.suit &&
-          holding.filter((c) => c.suit === lead.suit).length
-        )
-          throw new Error(`Must follow suit`);
+      if (table.players?.includes(uid)) {
+        throw new Error("Player is already at the table");
       }
-      await updateDoc(ref, {
-        play: arrayUnion(card.id),
-      });
+      const oldPlayers = table.players || [];
+      const newPlayers = [...oldPlayers];
+      newPlayers.push(...Array(4 - newPlayers.length).fill(""));
+      newPlayers[seat.index()] = uid;
+      updateDoc(ref, { players: newPlayers });
     },
-    [tableId]
+    [seat, tableId]
   );
-}
-
-export function useRedeal() {
-  const tableId = useTableId();
-  return useCallback(async () => {
-    const ref = tableDoc(tableId);
-    return updateDoc(ref, {
-      dealer: Seat.South.toJson(),
-      deal: generateDeal(),
-      bidding: [],
-      play: [],
-    });
-  }, [tableId]);
 }
 
 async function get(
-  tableId: string
+  id?: string
 ): Promise<[DocumentReference, QueryDocumentSnapshot, Table]> {
-  const ref = tableDoc(tableId);
+  if (!id) throw new Error("No table id specified");
+  const ref = tableDoc(id);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
     throw "Table does not exist";
   }
-  return [ref, snap, new Table(ref.id, Hand.fromJson(snap.data() as HandJson))];
-}
-
-function generateDeal() {
-  const cards = [] as number[];
-  for (let i = 0; i < 52; i++) {
-    cards.push(i);
-  }
-
-  const result = [] as number[];
-  for (let i = 0; i < 52; i++) {
-    const index = Math.floor(Math.random() * cards.length);
-    const card = cards[index];
-    cards.splice(index, 1);
-    result.push(card);
-  }
-  return result;
+  return [ref, snap, snap.data()];
 }

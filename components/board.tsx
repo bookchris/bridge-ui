@@ -84,7 +84,7 @@ export function Board({ hand, allHands, live }: BoardProps) {
 
   const setCard = <>{set && <SetCard hand={hand} set={set} />}</>;
   const variationCard = (
-    <>{set && <VariationsCard variations={variations} />}</>
+    <>{variations && <VariationsCard variations={variations} />}</>
   );
   const right = (
     <>

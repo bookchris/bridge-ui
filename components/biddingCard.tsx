@@ -51,7 +51,7 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
     bids.push(
       <TableCell
         key="next"
-        onClick={() => setPosition(undefined)}
+        onClick={() => setPosition(hand.positions)}
         sx={{
           backgroundColor: position === hand.positions ? "grey.300" : undefined,
           cursor: "pointer",

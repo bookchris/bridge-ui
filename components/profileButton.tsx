@@ -2,6 +2,7 @@ import { Button, Icon, Menu, MenuItem } from "@mui/material";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { writeUser } from "../lib/user";
 import { auth } from "../utils/firebase";
 
 export const ProfileButton = () => {
@@ -57,7 +58,12 @@ export const ProfileButton = () => {
 const googleProvider = new GoogleAuthProvider();
 const signIn = async () => {
   try {
-    await signInWithPopup(auth, googleProvider);
+    const creds = await signInWithPopup(auth, googleProvider);
+    const user = creds.user;
+    await writeUser({
+      id: user.uid,
+      displayName: user.displayName || undefined,
+    });
   } catch (err) {
     console.error(err);
   }

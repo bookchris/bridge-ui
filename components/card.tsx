@@ -20,6 +20,7 @@ export enum Orientation {
 export interface CardProps extends PaperProps {
   card: Card;
   orientation?: Orientation;
+  enabled?: boolean;
 }
 
 const CardImage = styled("img")({
@@ -28,7 +29,9 @@ const CardImage = styled("img")({
 
 export function Card2({
   card,
+  enabled,
   orientation = Orientation.None,
+  onClick,
   ...paperProps
 }: CardProps) {
   const { width, height } = useCardSize();
@@ -46,6 +49,7 @@ export function Card2({
   return (
     <Paper
       {...paperProps}
+      onClick={enabled ? onClick : undefined}
       sx={{
         position: "relative",
         display: "flex",
@@ -57,6 +61,7 @@ export function Card2({
         boxShadow: 1,
         ...paperSxProps[orientation],
         ...paperProps?.sx,
+        cursor: enabled ? "pointer" : undefined,
       }}
     >
       <Box sx={{ position: "absolute", top: "0.5em", left: "0.9em" }}>

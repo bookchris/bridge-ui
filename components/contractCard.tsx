@@ -1,4 +1,11 @@
-import { Paper, Table, TableCell, TableRow, Typography } from "@mui/material";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { useBoardContext } from "./board";
 
 export function ContractCard() {
@@ -11,18 +18,20 @@ export function ContractCard() {
         <Typography sx={{ p: 1, color: "white" }}>Hand</Typography>
       </Paper>
       <Table size="small">
-        <TableRow>
-          <TableCell>Contract</TableCell>
-          <TableCell>{contract}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>N/S</TableCell>
-          <TableCell>{handAt.northSouthTricks}</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>E/W</TableCell>
-          <TableCell>{handAt.eastWestTricks}</TableCell>
-        </TableRow>
+        <TableBody>
+          <TableRow>
+            <TableCell>Contract</TableCell>
+            <TableCell>{contract}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>N/S</TableCell>
+            <TableCell>{handAt.northSouthTricks}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>E/W</TableCell>
+            <TableCell>{handAt.eastWestTricks}</TableCell>
+          </TableRow>
+        </TableBody>
       </Table>
     </Paper>
   );
