@@ -1,7 +1,7 @@
 import { Bid, Hand, Seat } from "@chrisbook/bridge-core";
 import { Box, Button, ButtonProps, Icon, Paper } from "@mui/material";
 import { useState } from "react";
-import { useBid } from "../lib/hand";
+import { useBid } from "../lib/table";
 
 export interface BidBoxProps {
   hand: Hand;
@@ -36,8 +36,7 @@ function BidSelector({ hand, bidder }: { hand: Hand; bidder: Seat }) {
     bid(b, bidder);
   };
 
-  const bids = hand.bidding.validBids;
-  const isValid = (b: Bid) => !!bids.find((v) => v.bid === b.bid);
+  const isValid = (b: Bid) => hand.canBid(b, bidder);
 
   return (
     <Paper sx={{ p: 1 }}>

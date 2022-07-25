@@ -1,14 +1,15 @@
 import { Box, Button, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useAuth } from "../components/auth";
 import { MiniBoard } from "../components/board";
-import { useTableHand } from "../lib/hand";
 import { useCreateTable, useTableList } from "../lib/table";
 
 const Home: NextPage = () => {
   const router = useRouter();
   const [tables, loading, error] = useTableList();
   const createTable = useCreateTable();
+  const [auth] = useAuth();
 
   if (!tables) {
     return <div>Loading...</div>;
@@ -22,13 +23,20 @@ const Home: NextPage = () => {
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
         {tables.map((t) => (
-          <TableHand key={t.id} tableId={t.id} handId={t.handId} />
+          <MiniBoard
+            key={t.id}
+            hand={t.hand}
+            onClick={() => router.push("/tables/" + t.id)}
+          />
         ))}
       </Box>
       <Box>
         <Button
+          disabled={!auth}
           onClick={() =>
-            createTable().then((id) => router.push("/tables/" + id))
+            createTable(auth?.uid || "").then((id) =>
+              router.push("/tables/" + id)
+            )
           }
         >
           Create a new table
@@ -37,16 +45,5 @@ const Home: NextPage = () => {
     </div>
   );
 };
-
-function TableHand({ tableId, handId }: { tableId: string; handId: string }) {
-  const router = useRouter();
-  const [hand] = useTableHand(tableId, handId);
-
-  if (!hand) return <div />;
-
-  return (
-    <MiniBoard hand={hand} onClick={() => router.push("/tables/" + tableId)} />
-  );
-}
 
 export default Home;

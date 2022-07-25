@@ -1,18 +1,24 @@
-import { Card, Seat } from "@chrisbook/bridge-core";
+import { Seat } from "@chrisbook/bridge-core";
 import { Box } from "@mui/material";
-import { usePlay } from "../lib/hand";
+import { usePlay } from "../lib/table";
 import { useBoardContext } from "./board";
-import { Card2 } from "./card";
+import { PlayingCard } from "./card";
 
 export interface HoldingProps {
   seat: Seat;
-  cards: Card[];
 }
 
-export function Holding({ seat, cards }: HoldingProps) {
+export function Holding({ seat }: HoldingProps) {
   const play = usePlay();
-  const { width, hand } = useBoardContext();
+  const { width, hand, handAt, playingAs } = useBoardContext();
   const margin = width / 13;
+  const cards = handAt.getHolding(seat);
+
+  const isPlayer = playingAs === seat;
+  const isDummy =
+    handAt.play.length >= 1 && handAt.contract.declarer?.partner() === seat;
+  const canControl =
+    playingAs === seat || (isDummy && playingAs === seat.partner());
 
   const paperSx = {
     [Seat.West.toString()]: {
@@ -43,8 +49,9 @@ export function Holding({ seat, cards }: HoldingProps) {
     <Box sx={{ display: "flex", position: "absolute", zIndex: 1, ...paperSx }}>
       <Box sx={{ mr: `${margin}px` }} />
       {cards?.map((card) => (
-        <Card2
-          enabled={hand.canPlay(card, seat)}
+        <PlayingCard
+          enabled={canControl && hand.canPlay(card, seat)}
+          faceUp={isPlayer || isDummy}
           key={card.id}
           card={card}
           onClick={() => play(card, seat)}

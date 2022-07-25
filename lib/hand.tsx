@@ -1,21 +1,12 @@
-import { Bid, Card, Hand, HandJson, Seat } from "@chrisbook/bridge-core";
+import { Hand, HandJson } from "@chrisbook/bridge-core";
 import {
   collection,
-  doc,
   DocumentData,
-  DocumentReference,
   FirestoreDataConverter,
-  getDoc,
   QueryDocumentSnapshot,
   SnapshotOptions,
-  updateDoc,
 } from "firebase/firestore";
-import { useCallback } from "react";
-import {
-  useCollectionData,
-  useDocumentData,
-} from "react-firebase-hooks/firestore";
-import { useTableContext } from "../components/table";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 import { db } from "../utils/firebase";
 
 const handConverter: FirestoreDataConverter<Hand> = {
@@ -30,8 +21,10 @@ const handConverter: FirestoreDataConverter<Hand> = {
   },
 };
 
+/* 
 const handDoc = (tableId: string, handId: string) =>
   doc(db, "tables", tableId, "hands", handId).withConverter(handConverter);
+*/
 
 export function useTournamentHands(id: string) {
   return useCollectionData<Hand>(
@@ -39,6 +32,7 @@ export function useTournamentHands(id: string) {
   );
 }
 
+/*
 export function useTableHands(id: string) {
   return useCollectionData<Hand>(
     collection(db, "tables", id, "hands").withConverter(handConverter)
@@ -52,44 +46,12 @@ export function useTableHand(tableId?: string, handId?: string) {
       : null
   );
 }
+*/
 
-export function useBid() {
-  const { tableId, handId } = useTableContext();
-  return useCallback(
-    async (bid: Bid, seat: Seat) => {
-      const [ref, _, hand] = await get(tableId, handId);
-      const newHand = hand.doBid(bid, seat);
-      if (newHand) {
-        await updateDoc(ref, newHand.toJson());
-      }
-    },
-    [tableId, handId]
-  );
-}
+/*
+ */
 
-export function usePlay() {
-  const { tableId, handId } = useTableContext();
-  return useCallback(
-    async (card: Card, seat: Seat) => {
-      const [ref, _, hand] = await get(tableId, handId);
-      const newHand = hand.doPlay(card, seat);
-      if (newHand) {
-        await updateDoc(ref, newHand.toJson());
-      }
-    },
-    [tableId, handId]
-  );
-}
-
-export function useRedeal() {
-  const { tableId, handId } = useTableContext();
-  return useCallback(async () => {
-    const [ref] = await get(tableId, handId);
-    const newHand = Hand.fromDeal();
-    await updateDoc(ref, newHand.toJson());
-  }, [tableId, handId]);
-}
-
+/*
 async function get(
   tableId?: string,
   handId?: string
@@ -103,3 +65,4 @@ async function get(
   }
   return [ref, snap, snap.data()];
 }
+*/

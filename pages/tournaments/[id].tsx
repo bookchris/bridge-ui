@@ -55,7 +55,7 @@ const TournamentPageContent = ({
   }
   const hand = hands.find((h) => h.id === handId);
   if (hand) {
-    return <Board hand={hand} allHands={hands} position={position} />;
+    return <Board hand={hand} allHands={hands} position={position} analysis />;
   }
   return <PlayerList tournament={tournament} hands={hands} players={players} />;
 };
