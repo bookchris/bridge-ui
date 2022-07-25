@@ -18,10 +18,14 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
   const sit = useSit(seat);
 
   const index = Object.values(Seat).indexOf(seat);
-  const [tableUser] = useUser(table?.players?.[index]);
+  const playerId = table?.players?.[index];
+  const isRobot = playerId === "Robot";
+  const [tableUser] = useUser(playerId);
 
   let player = "";
-  if (table) {
+  if (isRobot) {
+    player = "Robot";
+  } else if (table) {
     player = tableUser?.displayName || "";
   } else {
     player = handAt.players[index].toString() || seat.toString();

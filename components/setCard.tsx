@@ -51,7 +51,7 @@ export function SetCard({ hand, set }: SetCardProps) {
               }}
             >
               <TableCell>{h.board}</TableCell>
-              <TableCell>{h.bidding.contract.toString()}</TableCell>
+              <TableCell>{h.contract.toString()}</TableCell>
               <TableCell>
                 <ResultText result={h.result} />
               </TableCell>

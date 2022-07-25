@@ -19,7 +19,7 @@ export function ScoreBox({ hand }: ScoreBoxProps) {
       }}
     >
       <Typography paragraph>
-        {hand.bidding.contract}&nbsp;
+        {hand.contract.toString()}&nbsp;
         <ResultText result={hand.result} />
       </Typography>
       <Typography paragraph>Score: {hand.scoreAs(Seat.South)}</Typography>

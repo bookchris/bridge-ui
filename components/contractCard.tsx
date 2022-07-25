@@ -10,7 +10,7 @@ import { useBoardContext } from "./board";
 
 export function ContractCard() {
   const { hand, handAt } = useBoardContext();
-  const contract = hand.bidding.contract;
+  const contract = hand.contract.toString();
   if (!contract) return <div />;
   return (
     <Paper square>

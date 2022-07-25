@@ -3,12 +3,21 @@ import {
   Box,
   Icon,
   IconButton,
+  Menu,
+  MenuItem,
   Paper,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
-import { useRedeal } from "../lib/hand";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useRedeal, useStand } from "../lib/table";
+import { useAuth } from "./auth";
 import { useTableContext } from "./table";
 
 export interface ControlsProps {
@@ -18,8 +27,10 @@ export interface ControlsProps {
 }
 
 export function Controls({ hand, position, setPosition }: ControlsProps) {
+  const [user] = useAuth();
+  const stand = useStand();
   const redeal = useRedeal();
-  const { tableId } = useTableContext();
+  const { tableId, playingAs } = useTableContext();
 
   const prev = useCallback(
     () => setPosition((p) => Math.max(0, p - 1)),
@@ -39,6 +50,8 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
     () => setPosition((p) => (nextPosition >= 0 ? nextPosition : p)),
     [nextPosition, setPosition]
   );
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
   useEffect(() => {
     const onKeyPress = (e: KeyboardEvent) => {
@@ -119,18 +132,38 @@ export function Controls({ hand, position, setPosition }: ControlsProps) {
           </span>
         </Tooltip>
         {tableId && (
-          <Tooltip title="Redeal">
-            <span>
-              <IconButton
-                onClick={() => {
-                  redeal();
-                  setPosition(0);
-                }}
-              >
-                <Icon>restart_alt</Icon>
-              </IconButton>
-            </span>
-          </Tooltip>
+          <div>
+            <Menu
+              anchorEl={anchorEl}
+              open={!!anchorEl}
+              onClose={() => setAnchorEl(undefined)}
+              onClick={() => setAnchorEl(undefined)}
+            >
+              {[
+                <MenuItem
+                  key="redeal"
+                  onClick={() => {
+                    redeal();
+                    setPosition(0);
+                  }}
+                >
+                  Redeal
+                </MenuItem>,
+                playingAs && (
+                  <MenuItem key="leave" onClick={() => stand(user?.uid || "")}>
+                    Leave Seat
+                  </MenuItem>
+                ),
+              ]}
+            </Menu>
+            <Tooltip title="Menu">
+              <span>
+                <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                  <Icon>menu</Icon>
+                </IconButton>
+              </span>
+            </Tooltip>
+          </div>
         )}
       </Box>
     </Paper>

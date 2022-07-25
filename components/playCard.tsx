@@ -19,15 +19,15 @@ export interface PlayProps {
 export function Play({ hand, position }: PlayProps) {
   const { setPosition } = useBoardContext();
 
-  const highlighted = position - hand.bids.length;
+  const highlighted = position - hand.bidding.length;
   const tricks = [...hand.tricks];
 
   if (hand.isPlaying) {
     if (hand.tricks.length === 0) {
-      tricks.push(new Trick(hand.openingLeader!, [], hand.bidding.suit!));
+      tricks.push(new Trick(hand.openingLeader!, [], hand.contract.suit!));
     } else if (hand.tricks[hand.tricks.length - 1].complete) {
       const last = hand.tricks[hand.tricks.length - 1];
-      tricks.push(new Trick(last.winningSeat!, [], hand.bidding.suit!));
+      tricks.push(new Trick(last.winningSeat!, [], hand.contract.suit!));
     }
   }
 
@@ -50,7 +50,7 @@ export function Play({ hand, position }: PlayProps) {
             let cols = trick.cards.map((card, j) => (
               <TableCell
                 key={card.id}
-                onClick={() => setPosition(i * 4 + j + hand.bids.length)}
+                onClick={() => setPosition(i * 4 + j + hand.bidding.length)}
                 align="center"
                 sx={{
                   backgroundColor:

@@ -3,6 +3,10 @@ import { Box, Paper, PaperProps, styled } from "@mui/material";
 import { useBoardContext } from "./board";
 import { cardColor } from "./cardText";
 
+const CardImage = styled("img")({
+  display: "block",
+});
+
 export const useCardSize = () => {
   const { width } = useBoardContext();
   return {
@@ -17,23 +21,21 @@ export enum Orientation {
   Right = 2,
 }
 
-export interface CardProps extends PaperProps {
+export interface PlayingCardProps extends PaperProps {
   card: Card;
   orientation?: Orientation;
   enabled?: boolean;
+  faceUp?: boolean;
 }
 
-const CardImage = styled("img")({
-  display: "block",
-});
-
-export function Card2({
+export function PlayingCard({
   card,
   enabled,
   orientation = Orientation.None,
+  faceUp,
   onClick,
   ...paperProps
-}: CardProps) {
+}: PlayingCardProps) {
   const { width, height } = useCardSize();
   const paperSxProps = {
     [Orientation.None]: { width: width, height: height },
@@ -64,21 +66,36 @@ export function Card2({
         cursor: enabled ? "pointer" : undefined,
       }}
     >
-      <Box sx={{ position: "absolute", top: "0.5em", left: "0.9em" }}>
-        <CornerText sx={{ color: color }}>{card.rankStr}</CornerText>
-        <CornerText sx={{ color: color }}>{card.suit.toString()}</CornerText>
-      </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          bottom: "0.5em",
-          right: "0.9em",
-          transform: "rotate(180deg);",
-        }}
-      >
-        <CornerText sx={{ color: color }}>{card.rankStr}</CornerText>
-        <CornerText sx={{ color: color }}>{card.suit.toString()}</CornerText>
-      </Box>
+      {faceUp ? (
+        <>
+          <Box sx={{ position: "absolute", top: "0.5em", left: "0.9em" }}>
+            <CornerText sx={{ color: color }}>{card.rankStr}</CornerText>
+            <CornerText sx={{ color: color }}>
+              {card.suit.toString()}
+            </CornerText>
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "0.5em",
+              right: "0.9em",
+              transform: "rotate(180deg);",
+            }}
+          >
+            <CornerText sx={{ color: color }}>{card.rankStr}</CornerText>
+            <CornerText sx={{ color: color }}>
+              {card.suit.toString()}
+            </CornerText>
+          </Box>
+        </>
+      ) : (
+        <CardImage
+          width={width}
+          height={height}
+          src="https://upload.wikimedia.org/wikipedia/commons/6/67/Cards-Reverse.svg"
+          //sx={{ width: width, height: height, ...imageSxProps[orientation] }}
+        />
+      )}
     </Paper>
   );
 }

@@ -27,6 +27,7 @@ interface BoardContextType {
   position: number;
   setPosition: Dispatch<SetStateAction<number>>;
   handAt: Hand;
+  playingAs?: Seat;
   width: number;
   scale: number;
 }
@@ -39,10 +40,12 @@ export interface BoardProps {
   hand: Hand;
   allHands?: Hand[];
   live?: boolean;
+  analysis?: boolean;
   position?: number;
+  playingAs?: Seat;
 }
 
-export function Board({ hand, allHands, live }: BoardProps) {
+export function Board({ hand, allHands, live, playingAs }: BoardProps) {
   const { position, setPosition } = usePosition(hand);
   const readOnly = position !== hand.positions || !live;
 
@@ -76,10 +79,11 @@ export function Board({ hand, allHands, live }: BoardProps) {
       scale: width / 900,
       hand: hand,
       handAt: handAt,
+      playingAs: playingAs,
       position: position,
       setPosition: setPosition,
     }),
-    [width, hand, handAt, position, setPosition]
+    [width, hand, handAt, playingAs, position, setPosition]
   );
 
   const setCard = <>{set && <SetCard hand={hand} set={set} />}</>;
@@ -139,10 +143,10 @@ export function Board({ hand, allHands, live }: BoardProps) {
                 position: "relative",
               }}
             >
-              <Holding seat={Seat.North} cards={handAt.north} />
-              <Holding seat={Seat.West} cards={handAt.west} />
-              <Holding seat={Seat.East} cards={handAt.east} />
-              <Holding seat={Seat.South} cards={handAt.south} />
+              <Holding seat={Seat.North} />
+              <Holding seat={Seat.West} />
+              <Holding seat={Seat.East} />
+              <Holding seat={Seat.South} />
               <PlayerBox seat={Seat.South} />
               <PlayerBox seat={Seat.North} />
               <PlayerBox seat={Seat.East} />
@@ -218,10 +222,10 @@ export function MiniBoard({ hand, onClick = () => {} }: MiniBoardProps) {
       }}
     >
       <BoardContext.Provider value={value}>
-        <Holding seat={Seat.North} cards={hand.north} />
-        <Holding seat={Seat.West} cards={hand.west} />
-        <Holding seat={Seat.East} cards={hand.east} />
-        <Holding seat={Seat.South} cards={hand.south} />
+        <Holding seat={Seat.North} />
+        <Holding seat={Seat.West} />
+        <Holding seat={Seat.East} />
+        <Holding seat={Seat.South} />
         <PlayerBox seat={Seat.South} />
         <PlayerBox seat={Seat.North} />
         <PlayerBox seat={Seat.East} />

@@ -22,7 +22,6 @@ export interface BiddingProps {
 export function BiddingCard({ hand, seat, position }: BiddingProps) {
   const { setPosition } = useBoardContext();
 
-  //const highlighted = hand.bidding.bids.length + hand.play.length - position;
   const viewer = Seat.South;
   const dealer = hand.dealer;
 
@@ -32,7 +31,7 @@ export function BiddingCard({ hand, seat, position }: BiddingProps) {
     pos = pos.next();
     bids.push(<TableCell key={"empty" + pos} />);
   }
-  hand.bidding.bids.forEach((bid, i) => {
+  hand.bidding.forEach((bid, i) => {
     bids.push(
       <TableCell
         onClick={() => setPosition(i)}

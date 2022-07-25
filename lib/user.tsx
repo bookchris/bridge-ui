@@ -37,7 +37,7 @@ export function userDoc(id: string) {
 }
 
 export function useUser(id: string | undefined) {
-  return useDocumentData<User>(id ? userDoc(id) : null);
+  return useDocumentData<User>(id && id !== "Robot" ? userDoc(id) : null);
 }
 
 export async function writeUser(user: User) {

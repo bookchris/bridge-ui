@@ -1,5 +1,5 @@
 import { Hand, Seat } from "@chrisbook/bridge-core";
-import { Card2 } from "./card";
+import { PlayingCard } from "./card";
 
 export interface TrickProps {
   hand: Hand;
@@ -34,16 +34,20 @@ export function Trick({ hand, seat }: TrickProps) {
   };
   return (
     <>
-      {trick?.cards.map((card, i) => (
-        <Card2
-          key={card.id}
-          card={card}
-          sx={{
-            position: "absolute",
-            ...seatSxProps[trick.leader.next(i).toString()],
-          }}
-        />
-      ))}
+      {trick?.cards.map((card, i) => {
+        console.log("played card");
+        return (
+          <PlayingCard
+            faceUp
+            key={card.id}
+            card={card}
+            sx={{
+              position: "absolute",
+              ...seatSxProps[trick.leader.next(i).toString()],
+            }}
+          />
+        );
+      })}
     </>
   );
 }
