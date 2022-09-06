@@ -7,10 +7,14 @@ import { useCreateTable, useTableList } from "../lib/table";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [tables, loading, error] = useTableList();
+  const [tables, _, error] = useTableList();
   const createTable = useCreateTable();
   const [auth] = useAuth();
 
+  if (error) {
+    console.log("error", error);
+    return <div>Error: {error.message}</div>;
+  }
   if (!tables) {
     return <div>Loading...</div>;
   }

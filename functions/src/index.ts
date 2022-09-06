@@ -16,7 +16,7 @@ export const robot = firestore
   .document("tables/{tableId}")
   .onWrite(async (change, context) => {
     const tableId = context.params.tableId;
-    logger.info("onWrite for table " + tableId);
+    logger.info("onWrite for tableY " + tableId);
 
     const ref = db.collection("tables").doc(tableId);
     const snapshot = await ref.get();
