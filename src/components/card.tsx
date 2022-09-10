@@ -1,4 +1,4 @@
-import { Box, Paper, PaperProps, styled } from "@mui/material";
+import { Box, ButtonBase, ButtonBaseProps, styled } from "@mui/material";
 import { Card } from "../../functions/core";
 import { useBoardContext } from "./board";
 import { cardColor } from "./cardText";
@@ -21,7 +21,7 @@ export enum Orientation {
   Right = 2,
 }
 
-export interface PlayingCardProps extends PaperProps {
+export interface PlayingCardProps extends ButtonBaseProps {
   card: Card;
   orientation?: Orientation;
   enabled?: boolean;
@@ -49,8 +49,9 @@ export function PlayingCard({
   };
   const color = cardColor(card);
   return (
-    <Paper
+    <ButtonBase
       {...paperProps}
+      disabled={!enabled}
       onClick={enabled ? onClick : undefined}
       sx={{
         position: "relative",
@@ -96,7 +97,7 @@ export function PlayingCard({
           //sx={{ width: width, height: height, ...imageSxProps[orientation] }}
         />
       )}
-    </Paper>
+    </ButtonBase>
   );
 }
 

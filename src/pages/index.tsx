@@ -3,17 +3,17 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useAuth } from "../components/auth";
 import { MiniBoard } from "../components/board";
-import { useCreateTable, useTableList } from "../lib/table";
+import { ErrorAlert } from "../components/errorAlert";
+import { useCreateTable, useMyTables } from "../lib/table";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [tables, _, error] = useTableList();
+  const [tables, _, error] = useMyTables();
   const createTable = useCreateTable();
   const [auth] = useAuth();
 
   if (error) {
-    console.log("error", error);
-    return <div>Error: {error.message}</div>;
+    return <ErrorAlert error={error} />;
   }
   if (!tables) {
     return <div>Loading...</div>;
@@ -22,7 +22,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <Typography variant="h5" sx={{ py: 1 }}>
-        Join a table
+        My tables
       </Typography>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>

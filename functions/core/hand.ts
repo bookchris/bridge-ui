@@ -87,16 +87,21 @@ export class Hand {
     };
   }
 
-  getHolding(seat: Seat): Card[] {
+  getDeal(seat: Seat): Card[] {
     if (this.deal.length != 52) {
       return [];
     }
     const offset = 13 * seat.index();
     return this.deal
       .slice(offset, offset + 13)
-      .filter((c) => !this.play.find((p) => p.id === c.id))
       .sort(Card.comparator)
       .reverse();
+  }
+
+  getHolding(seat: Seat): Card[] {
+    return this.getDeal(seat).filter(
+      (c) => !this.play.find((p) => p.id === c.id)
+    );
   }
 
   get north() {

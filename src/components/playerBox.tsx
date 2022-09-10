@@ -29,8 +29,7 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
   } else if (table) {
     player = tableUser?.displayName || "";
   } else {
-    //player = handAt.players[index].toString() || seat.toString();
-    player = "FIXME";
+    player = handAt.players[index].toString() || seat.toString();
   }
   const isTurn = handAt.turn === seat;
 

@@ -45,6 +45,10 @@ export class Card {
     return this.id;
   }
 
+  toBen() {
+    return `${this.suit.toLin()}${this.rankStr}`;
+  }
+
   static comparator(a: Card, b: Card): number {
     return a.id - b.id;
   }
