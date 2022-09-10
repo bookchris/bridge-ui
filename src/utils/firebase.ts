@@ -14,7 +14,6 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const db = getFirestore(firebaseApp);
-console.log("NEXT_PUBLIC_USE_EMULATORS", process.env.NEXT_PUBLIC_USE_EMULATORS);
 if (process.env.NEXT_PUBLIC_USE_EMULATORS) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }

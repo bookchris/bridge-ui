@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:emulators": "firebase emulators:exec 'npm run dev'",
+    "dev:emulators": "firebase emulators:exec 'NEXT_PUBLIC_USE_EMULATORS=1 npm run dev'",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"

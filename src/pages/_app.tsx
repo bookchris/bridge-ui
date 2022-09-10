@@ -3,11 +3,11 @@ import {
   Box,
   Button,
   CssBaseline,
+  Link,
   Menu,
   MenuItem,
   ThemeProvider,
   Toolbar,
-  Typography,
   useMediaQuery,
 } from "@mui/material";
 import type { AppProps } from "next/app";
@@ -25,14 +25,27 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AppBar position="absolute" color="secondary" elevation={0}>
         <Toolbar>
           <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
-            <Typography variant="h4" color="inherit" noWrap sx={{ pr: 4 }}>
-              bridge
-            </Typography>
+            <NextLink passHref href="/">
+              <Link
+                variant="h4"
+                color="inherit"
+                underline="none"
+                noWrap
+                sx={{ pr: 4 }}
+              >
+                bridge
+              </Link>
+            </NextLink>
             {isSm && (
               <>
-                <Button color="inherit" href="/">
-                  Play
-                </Button>
+                <NextLink passHref href="/">
+                  <Button
+                    color="inherit"
+                    sx={{ "&:hover": { color: "black" } }}
+                  >
+                    Play
+                  </Button>
+                </NextLink>
                 <AnalyizeMenu />
               </>
             )}
@@ -63,11 +76,8 @@ const AnalyizeMenu = () => {
     <>
       <Button
         color="inherit"
-        id="menubutton1"
-        //aria-owns={anchorEl ? "analyize-menu" : null}
-        //aria-haspopup="true"
         onClick={(e) => setAnchorEl(e.currentTarget)}
-        onMouseOver={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ "&:hover": { color: "black" } }}
       >
         Analyse
       </Button>

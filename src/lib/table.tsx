@@ -5,18 +5,21 @@ import {
   DocumentReference,
   FirestoreDataConverter,
   getDoc,
+  query,
   QueryDocumentSnapshot,
   runTransaction,
   SnapshotOptions,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { useCallback } from "react";
 import {
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
-import { useTableContext } from "../components/table";
 import { Bid, Card, Hand, Seat } from "../../functions/core";
+import { useAuth } from "../components/auth";
+import { useTableContext } from "../components/table";
 import { db } from "../utils/firebase";
 
 export interface Table {
@@ -60,6 +63,17 @@ export function useTable(id: string) {
 export function useTableList() {
   return useCollectionData<Table>(tableCollection());
 }
+
+export const useMyTables = () => {
+  const [user] = useAuth();
+  const uid = user?.uid;
+
+  const myTablesQuery = uid
+    ? query(tableCollection(), where("players", "array-contains", uid))
+    : null;
+
+  return useCollectionData<Table>(myTablesQuery);
+};
 
 export function useCreateTable() {
   return useCallback(async (uid: string) => {

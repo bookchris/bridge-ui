@@ -152,7 +152,7 @@ export function Board({ hand, allHands, live, playingAs }: BoardProps) {
               <PlayerBox seat={Seat.East} />
               <PlayerBox seat={Seat.West} />
               {!readOnly && handAt.state === HandState.Bidding && (
-                <BidBox hand={handAt} />
+                <BidBox hand={handAt} seat={playingAs} />
               )}
               {handAt.state === HandState.Playing && <Trick hand={handAt} />}
               {handAt.state === HandState.Complete && (
