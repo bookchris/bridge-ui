@@ -17,7 +17,7 @@ import {
 } from "react";
 import { Hand } from "../../functions/core";
 import { useRedeal, useStand } from "../lib/table";
-import { useAuth } from "./auth";
+import { useCurrentUser } from "./auth";
 import { useTableContext } from "./table";
 
 export interface ControlsProps {
@@ -27,7 +27,7 @@ export interface ControlsProps {
 }
 
 export function Controls({ hand, position, setPosition }: ControlsProps) {
-  const [user] = useAuth();
+  const user = useCurrentUser();
   const stand = useStand();
   const redeal = useRedeal();
   const { tableId, playingAs } = useTableContext();

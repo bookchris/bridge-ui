@@ -1,9 +1,8 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { Seat } from "../../functions/core";
 import { useSit } from "../lib/table";
 import { useUser } from "../lib/user";
-import { auth } from "../utils/firebase";
+import { useCurrentUser } from "./auth";
 import { useBoardContext } from "./board";
 import { useTableContext } from "./table";
 
@@ -14,13 +13,13 @@ export interface PlayerBoxProps {
 export function PlayerBox({ seat }: PlayerBoxProps) {
   const { table } = useTableContext();
   const { scale, handAt } = useBoardContext();
-  const [user] = useAuthState(auth);
+  const user = useCurrentUser();
   const sit = useSit(seat);
 
   const index = Object.values(Seat).indexOf(seat);
   const playerId = table?.players?.[index];
   const isRobot = playerId === "Robot";
-  const [tableUser] = useUser(playerId);
+  const { data: tableUser } = useUser(playerId || "invalid");
 
   //console.log("handAt", handAt, index, handAt.players[index].toString());
   let player = "";

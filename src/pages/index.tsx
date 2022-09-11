@@ -1,24 +1,100 @@
 import { Box, Button, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useAuth } from "../components/auth";
+import { useCurrentUser } from "../components/auth";
 import { MiniBoard } from "../components/board";
 import { ErrorAlert } from "../components/errorAlert";
-import { useCreateTable, useMyTables } from "../lib/table";
+import {
+  useCreateTable,
+  useMyTables,
+  useMyTournamentTable,
+} from "../lib/table";
+import {
+  Tournament,
+  useDailyTournament,
+  useJoinTournament,
+} from "../lib/tournament";
 
 const Home: NextPage = () => {
-  const router = useRouter();
-  const [tables, _, error] = useMyTables();
-  const createTable = useCreateTable();
-  const [auth] = useAuth();
+  const user = useCurrentUser();
+  return (
+    <div>
+      <Daily />
+    </div>
+  );
+};
 
+const Daily = () => {
+  const { data: daily, error, status } = useDailyTournament();
+
+  if (error) {
+    return <ErrorAlert error={error} />;
+  }
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+  if (!daily) {
+    return <div>No daily tournament</div>;
+  }
+  return (
+    <div>
+      <Typography variant="h5" sx={{ py: 1 }}>
+        Daily tournament
+      </Typography>
+      <DailyBoard tournament={daily} />
+    </div>
+  );
+};
+
+const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
+  const router = useRouter();
+  const { data: table, status, error } = useMyTournamentTable(tournament.id);
+  const joinTournament = useJoinTournament();
+
+  if (error) {
+    return <ErrorAlert error={error} />;
+  }
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+  return (
+    <div>
+      <Typography variant="h5" sx={{ py: 1 }}>
+        {tournament.name}
+      </Typography>
+      {table ? (
+        <div>
+          <p>There are hands</p>
+          <MiniBoard
+            hand={tournament.hands[0]}
+            onClick={() => router.push(`/tables/${table.id}`)}
+          />
+        </div>
+      ) : (
+        <div>
+          <p>There are no hands</p>
+          <MiniBoard
+            hand={tournament.hands[0]}
+            onClick={() => joinTournament(tournament.id)}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const MyTables = () => {
+  const createTable = useCreateTable();
+  const router = useRouter();
+  const user = useCurrentUser();
+
+  const { data: tables, error } = useMyTables();
   if (error) {
     return <ErrorAlert error={error} />;
   }
   if (!tables) {
     return <div>Loading...</div>;
   }
-
   return (
     <div>
       <Typography variant="h5" sx={{ py: 1 }}>
@@ -36,9 +112,9 @@ const Home: NextPage = () => {
       </Box>
       <Box>
         <Button
-          disabled={!auth}
+          disabled={!user}
           onClick={() =>
-            createTable(auth?.uid || "").then((id) =>
+            createTable(user?.uid || "").then((id) =>
               router.push("/tables/" + id)
             )
           }

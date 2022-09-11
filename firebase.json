@@ -6,11 +6,7 @@
   "hosting": {
     "public": "out",
     "cleanUrls": true,
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "/tournaments/*",
@@ -41,6 +37,9 @@
     },
     "firestore": {
       "port": 8080
+    },
+    "pubsub": {
+      "port": 8085
     },
     "ui": {
       "enabled": true
