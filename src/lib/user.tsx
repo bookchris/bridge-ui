@@ -1,6 +1,7 @@
 import {
   doc,
   DocumentData,
+  Firestore,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   setDoc,
@@ -8,8 +9,7 @@ import {
   WithFieldValue,
 } from "firebase/firestore";
 import { useCallback } from "react";
-import { useDocumentData } from "react-firebase-hooks/firestore";
-import { db } from "../utils/firebase";
+import { useFirestore, useFirestoreDocData } from "reactfire";
 
 export interface User {
   id: string;
@@ -32,18 +32,20 @@ const userConverter: FirestoreDataConverter<User> = {
   },
 };
 
-export function userDoc(id: string) {
+export function userDoc(db: Firestore, id: string) {
   return doc(db, "users", id).withConverter(userConverter);
 }
 
-export function useUser(id: string | undefined) {
-  return useDocumentData<User>(id && id !== "Robot" ? userDoc(id) : null);
+export function useUser(id: string) {
+  const db = useFirestore();
+  return useFirestoreDocData<User>(userDoc(db, id));
 }
 
-export async function writeUser(user: User) {
-  await setDoc(userDoc(user.id), user);
+export async function writeUser(db: Firestore, user: User) {
+  await setDoc(userDoc(db, user.id), user);
 }
 
 export function useWriteUser() {
-  return useCallback(writeUser, []);
+  const db = useFirestore();
+  return useCallback((user: User) => writeUser(db, user), [db]);
 }

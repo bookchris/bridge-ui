@@ -1,8 +1,9 @@
 import { createContext, useContext, useMemo } from "react";
 import { Seat, Seats } from "../../functions/core";
 import { Table as LibTable, useTable } from "../lib/table";
-import { useAuth } from "./auth";
+import { useCurrentUser } from "./auth";
 import { Board } from "./board";
+import { ErrorAlert } from "./errorAlert";
 
 interface TableContextType {
   tableId?: string;
@@ -16,8 +17,10 @@ const TableContext = createContext<TableContextType>({});
 export const useTableContext = () => useContext(TableContext);
 
 export function Table({ id }: { id: string }) {
-  const [table] = useTable(id);
-
+  const { data: table, error } = useTable(id);
+  if (error) {
+    return <ErrorAlert error={error} />;
+  }
   if (!table) {
     return <div>Loading...</div>;
   }
@@ -28,7 +31,7 @@ export function Table({ id }: { id: string }) {
 export function TableContent({ table }: { table: LibTable }) {
   const hand = table.hand;
 
-  const [user] = useAuth();
+  const user = useCurrentUser();
 
   const seatIndex = table?.players?.indexOf(user?.uid || "") ?? -1;
   const seat = seatIndex === -1 ? undefined : Seats[seatIndex];

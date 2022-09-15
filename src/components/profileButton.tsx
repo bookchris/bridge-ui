@@ -1,20 +1,29 @@
 import { Button, Icon, Menu, MenuItem } from "@mui/material";
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import {
+  Auth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+import { Firestore } from "firebase/firestore";
 import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useAuth, useFirestore, useSigninCheck } from "reactfire";
 import { writeUser } from "../lib/user";
-import { auth } from "../utils/firebase";
+import { useCurrentUser } from "./auth";
 
 export const ProfileButton = () => {
-  const [user, loading, error] = useAuthState(auth);
+  const { status } = useSigninCheck();
+  const user = useCurrentUser();
+  const auth = useAuth();
+  const db = useFirestore();
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
-  if (loading) {
+  if (status === "loading") {
     return <div />;
   }
   if (!user) {
     return (
-      <Button color="inherit" onClick={signIn}>
+      <Button color="inherit" onClick={() => signIn(db, auth)}>
         Login
       </Button>
     );
@@ -55,12 +64,12 @@ export const ProfileButton = () => {
   );
 };
 
-const googleProvider = new GoogleAuthProvider();
-const signIn = async () => {
+const signIn = async (db: Firestore, auth: Auth) => {
   try {
-    const creds = await signInWithPopup(auth, googleProvider);
+    const provider = new GoogleAuthProvider();
+    const creds = await signInWithPopup(auth, provider);
     const user = creds.user;
-    await writeUser({
+    await writeUser(db, {
       id: user.uid,
       displayName: user.displayName || undefined,
     });

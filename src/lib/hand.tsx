@@ -2,12 +2,13 @@ import {
   collection,
   DocumentData,
   FirestoreDataConverter,
+  query,
   QueryDocumentSnapshot,
   SnapshotOptions,
+  where,
 } from "firebase/firestore";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useFirestore, useFirestoreCollectionData } from "reactfire";
 import { Hand, HandJson } from "../../functions/core";
-import { db } from "../utils/firebase";
 
 const handConverter: FirestoreDataConverter<Hand> = {
   toFirestore(hand: Hand): DocumentData {
@@ -27,9 +28,19 @@ const handDoc = (tableId: string, handId: string) =>
 */
 
 export function useTournamentHands(id: string) {
-  return useCollectionData<Hand>(
+  const db = useFirestore();
+  return useFirestoreCollectionData<Hand>(
     collection(db, "tournaments", id, "hands").withConverter(handConverter)
   );
+}
+
+export function useMyTournamentHands(id: string) {
+  const db = useFirestore();
+  const q = query(
+    collection(db, "tournaments", id, "hands").withConverter(handConverter),
+    where("players", "==", "active")
+  );
+  return useFirestoreCollectionData<Hand>(q);
 }
 
 /*
