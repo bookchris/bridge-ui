@@ -285,6 +285,10 @@ export class Hand {
     return undefined;
   }
 
+  isDummy(seat: Seat): boolean {
+    return this.play.length >= 1 && this.contract.declarer?.partner() === seat;
+  }
+
   get contract() {
     return new Contract(this.bidding, this.dealer);
   }

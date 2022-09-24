@@ -15,10 +15,10 @@ export function Holding({ seat }: HoldingProps) {
   const cards = handAt.getHolding(seat);
 
   const isPlayer = playingAs === seat;
-  const isDummy =
-    handAt.play.length >= 1 && handAt.contract.declarer?.partner() === seat;
-  const canControl =
-    playingAs === seat || (isDummy && playingAs === seat.partner());
+  const isDummy = handAt.isDummy(seat);
+  const canControl = isDummy
+    ? playingAs === seat.partner()
+    : playingAs === seat;
 
   const paperSx = {
     [Seat.West.toString()]: {
