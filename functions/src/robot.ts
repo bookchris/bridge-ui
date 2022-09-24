@@ -6,7 +6,7 @@ import { app } from "./firebase";
 const db = app.firestore();
 
 const baseURL = "https://ben-wrqv6ob42a-uc.a.run.app";
-// const baseURL = "http://localhost:8081";
+//const baseURL = "http://localhost:8081";
 
 export const robot = firestore
   .document("tables/{tableId}")
@@ -24,40 +24,46 @@ export const robot = firestore
     const hand = Hand.fromJson(data.hand || {});
 
     const turn = hand.turn;
+    if (!turn) {
+      logger.info("Nobody's turn");
+      return;
+    }
+    const turnOrDelcarer = hand.isDummy(turn) ? turn.partner() : turn;
+    if (data?.players?.at(turnOrDelcarer.index()) !== "Robot") {
+      logger.info("Not Robot's turn");
+      return;
+    }
+
+    logger.info("Robot's turn!");
     let newHand: Hand | undefined;
-    if (turn && data?.players?.at(turn.index()) === "Robot") {
-      logger.info("Robot's turn!");
-      if (hand.isBidding) {
-        const bid = await getBid(hand);
-        newHand = hand.doBid(bid, turn);
+    if (hand.isBidding) {
+      const bid = await getBid(hand);
+      newHand = hand.doBid(bid, turn);
+      if (!newHand) {
+        logger.info("unable to perform bid", bid.toString());
+      }
+    } else if (hand.isPlaying) {
+      if (!hand.play.length) {
+        const card = await getLead(hand);
+        newHand = hand.doPlay(card, turn);
         if (!newHand) {
-          logger.info("unable to perform bid", bid.toString());
+          logger.info("unable to perform lead", card.toString());
         }
-      } else if (hand.isPlaying) {
-        if (!hand.play.length) {
-          const card = await getLead(hand);
-          newHand = hand.doPlay(card, turn);
-          if (!newHand) {
-            logger.info("unable to perform lead", card.toString());
-          }
+      } else {
+        const playable = hand
+          .getHolding(turn)
+          .filter((card) => hand.canPlay(card, turn));
+        let card: Card;
+        if (playable.length === 1) {
+          card = playable[0];
         } else {
-          const playable = hand
-            .getHolding(turn)
-            .filter((card) => hand.canPlay(card, turn));
-          let card: Card;
-          if (playable.length === 1) {
-            card = playable[0];
-          } else {
-            card = await getPlay(hand);
-          }
-          newHand = hand.doPlay(card, turn);
-          if (!newHand) {
-            logger.info("unable to perform play", card.toString());
-          }
+          card = await getPlay(hand);
+        }
+        newHand = hand.doPlay(card, turn);
+        if (!newHand) {
+          logger.info("unable to perform play", card.toString());
         }
       }
-    } else {
-      logger.info("Not Robot's turn");
     }
     if (newHand) {
       ref.update({ hand: newHand.toJson() });
