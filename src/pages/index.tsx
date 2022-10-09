@@ -47,6 +47,20 @@ const Daily = () => {
 };
 
 const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
+  const user = useCurrentUser();
+  const router = useRouter();
+
+  return (
+    <div>
+      <Typography variant="h5" sx={{ py: 1 }}>
+        {tournament.name}
+      </Typography>
+      {user ? <MyDailyBoard tournament={tournament} /> : <p>Login to join</p>}
+    </div>
+  );
+};
+
+const MyDailyBoard = ({ tournament }: { tournament: Tournament }) => {
   const router = useRouter();
   const { data: table, status, error } = useMyTournamentTable(tournament.id);
   const joinTournament = useJoinTournament();
@@ -64,7 +78,7 @@ const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
       </Typography>
       {table ? (
         <div>
-          <p>There are hands</p>
+          <p>You are joined. Click to play this tournament</p>
           <MiniBoard
             hand={tournament.hands[0]}
             onClick={() => router.push(`/tables/${table.id}`)}
@@ -72,7 +86,7 @@ const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
         </div>
       ) : (
         <div>
-          <p>There are no hands</p>
+          <p>Click to join this tournament</p>
           <MiniBoard
             hand={tournament.hands[0]}
             onClick={() => joinTournament(tournament.id)}
