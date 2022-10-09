@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:emulators": "NEXT_PUBLIC_USE_EMULATORS=1 npm run dev",
+    "emulators": "firebase emulators:start",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"

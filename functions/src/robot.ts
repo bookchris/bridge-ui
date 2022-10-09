@@ -5,8 +5,7 @@ import { app } from "./firebase";
 
 const db = app.firestore();
 
-const baseURL = "https://ben-wrqv6ob42a-uc.a.run.app";
-//const baseURL = "http://localhost:8081";
+const baseURL = process.env.BEN_URL;
 
 export const robot = firestore
   .document("tables/{tableId}")
