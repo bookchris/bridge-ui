@@ -1,4 +1,4 @@
-import { Hand, Seat } from "../../functions/core";
+import { Hand, Seat } from "../../../functions/core";
 import { PlayingCard } from "./card";
 
 export interface TrickProps {

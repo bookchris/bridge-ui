@@ -1,9 +1,9 @@
 import { createContext, useContext, useMemo } from "react";
 import { useErrorHandler } from "react-error-boundary";
-import { Seat, Seats } from "../../functions/core";
-import { useCurrentUser } from "./auth/auth";
+import { Seat, Seats } from "../../../functions/core";
+import { useCurrentUser } from "../auth/auth";
+import { Table as LibTable, useTable } from "../db/table";
 import { Board } from "./board";
-import { Table as LibTable, useTable } from "./db/table";
 
 interface TableContextType {
   tableId?: string;

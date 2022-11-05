@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { Table } from "../../components/table";
+import { Table } from "../../components/ui/table";
 
 const TablePage: NextPage = () => {
   const { query, isReady } = useRouter();

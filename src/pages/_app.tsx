@@ -23,8 +23,8 @@ import {
   FirestoreProvider,
   useFirebaseApp,
 } from "reactfire";
-import { ProfileButton } from "../components/profileButton";
 import { theme } from "../components/theme";
+import { ProfileButton } from "../components/ui/profileButton";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCtSsAIy3AFecDUcyvX7l6gbp-FKhQgeQs",
