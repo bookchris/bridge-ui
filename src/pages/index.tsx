@@ -3,7 +3,6 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useErrorHandler } from "react-error-boundary";
 import { useCurrentUser } from "../components/auth/auth";
-import { MiniBoard } from "../components/board";
 import {
   useCreateTable,
   useMyTables,
@@ -14,6 +13,7 @@ import {
   useDailyTournament,
   useJoinTournament,
 } from "../components/db/tournament";
+import { MiniBoard } from "../components/ui/board";
 
 const Home: NextPage = () => {
   const user = useCurrentUser();

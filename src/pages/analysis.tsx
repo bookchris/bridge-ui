@@ -9,7 +9,7 @@ import {
 import type { NextPage } from "next";
 import { useState } from "react";
 import { Hand } from "../../functions/core";
-import { Board } from "../components/board";
+import { Board } from "../components/ui/board";
 
 const Analyse: NextPage = () => {
   const [hand, setHand] = useState<Hand>();
