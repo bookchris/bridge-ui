@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-import { Hand } from "../../functions/core";
+import { Hand } from "../../../functions/core";
 import { useTableContext } from "./table";
 
 export const usePosition = (hand: Hand) => {

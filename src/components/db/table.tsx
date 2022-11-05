@@ -14,15 +14,15 @@ import {
   where,
 } from "firebase/firestore";
 import { useCallback } from "react";
+import { useErrorHandler } from "react-error-boundary";
 import {
-  ObservableStatus,
   useFirestore,
   useFirestoreCollectionData,
   useFirestoreDocData,
 } from "reactfire";
-import { Bid, Card, Hand, Seat } from "../../functions/core";
-import { useCurrentUserMust } from "../components/auth";
-import { useTableContext } from "../components/table";
+import { Bid, Card, Hand, Seat } from "../../../functions/core";
+import { useCurrentUserMust } from "../auth/auth";
+import { useTableContext } from "../ui/table";
 
 export interface Table {
   id: string;
@@ -79,7 +79,7 @@ export const useMyTables = () => {
   );
 };
 
-export function useMyTournamentTable(id: string): ObservableStatus<Table> {
+export function useMyTournamentTable(id: string): Table | undefined {
   const user = useCurrentUserMust();
   const db = useFirestore();
   const q = query(
@@ -88,10 +88,15 @@ export function useMyTournamentTable(id: string): ObservableStatus<Table> {
     where("players", "array-contains", user.uid)
   );
   const status = useFirestoreCollectionData<Table>(q);
+  useErrorHandler(status.error);
+  return status.data?.[0];
+  /*
+  console.log("useMyTournamentTable", status);
   return {
     ...status,
     data: status.data?.[0],
   };
+  */
 }
 
 export function useCreateTable() {

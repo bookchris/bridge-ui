@@ -1,5 +1,5 @@
 import { Paper, Typography } from "@mui/material";
-import { Hand, Seat } from "../../functions/core";
+import { Hand, Seat } from "../../../functions/core";
 import { ResultText } from "./resultText";
 
 export interface ScoreBoxProps {

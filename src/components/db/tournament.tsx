@@ -4,6 +4,7 @@ import {
   DocumentData,
   Firestore,
   FirestoreDataConverter,
+  onSnapshot,
   query,
   QueryDocumentSnapshot,
   runTransaction,
@@ -12,15 +13,15 @@ import {
   where,
   WithFieldValue,
 } from "firebase/firestore";
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useErrorHandler } from "react-error-boundary";
 import {
-  ObservableStatus,
   useFirestore,
   useFirestoreCollectionData,
   useFirestoreDocData,
 } from "reactfire";
-import { Hand } from "../../functions/core";
-import { useCurrentUserMust } from "../components/auth";
+import { Hand } from "../../../functions/core";
+import { useCurrentUserMust } from "../auth/auth";
 import { tableCollection, tableConverter } from "./table";
 
 export interface Tournament {
@@ -97,15 +98,58 @@ export function useTournamentPlayers(id: string) {
   );
 }
 
-export function useDailyTournament(): ObservableStatus<Tournament> {
+export function useDailyTournament(): Tournament {
   const db = useFirestore();
   const status = useFirestoreCollectionData<Tournament>(
     query(tournamentsCollection(db), where("daily", "==", "active"))
   );
+  useErrorHandler(status.error);
+  return status.data?.[0];
+  /*
   return {
     ...status,
     data: status.data?.[0],
   };
+  */
+}
+
+export function useDailyTournament2(): Tournament | undefined {
+  const db = useFirestore();
+  const [data, setData] = useState<Tournament | undefined>();
+
+  const resolveRef = useRef<(t: Tournament | undefined) => void>();
+  const promise = useMemo(
+    () =>
+      new Promise<Tournament | undefined>((resolve) => {
+        resolveRef.current = resolve;
+      }),
+    []
+  );
+
+  useEffect(() => {
+    // todo return;
+    console.log("reqeusting snapshot");
+    onSnapshot(
+      query(tournamentsCollection(db), where("daily", "==", "active")),
+      (snapshot) => {
+        const data = snapshot.empty ? undefined : snapshot.docs[0].data();
+        console.log("data", data, resolveRef.current);
+        setData(data);
+        if (resolveRef.current) {
+          resolveRef.current(data);
+          resolveRef.current = undefined;
+        }
+      },
+      (error) => {
+        console.log("got an error", error);
+      }
+    );
+  }, [db]);
+  console.log("daily", resolveRef.current, promise, data);
+  if (resolveRef.current) throw promise;
+  return data;
+
+  //const status = useFirestoreCollectionData<Tournament>();
 }
 
 export function useJoinTournament() {
@@ -137,6 +181,6 @@ export function useJoinTournament() {
         */
       });
     },
-    [db]
+    [db, user.uid]
   );
 }

@@ -15,9 +15,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Hand } from "../../functions/core";
-import { useRedeal, useStand } from "../lib/table";
-import { useCurrentUser } from "./auth";
+import { Hand } from "../../../functions/core";
+import { useCurrentUser } from "../auth/auth";
+import { useRedeal, useStand } from "../db/table";
 import { useTableContext } from "./table";
 
 export interface ControlsProps {

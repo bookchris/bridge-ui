@@ -7,7 +7,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Hand, Seat, Trick } from "../../functions/core";
+import { Hand, Seat, Trick } from "../../../functions/core";
 import { useBoardContext } from "./board";
 import { CardText } from "./cardText";
 

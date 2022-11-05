@@ -1,7 +1,7 @@
 import { Box, Button, ButtonProps, Icon, Paper } from "@mui/material";
 import { useState } from "react";
-import { Bid, Hand, Seat } from "../../functions/core";
-import { useBid } from "../lib/table";
+import { Bid, Hand, Seat } from "../../../functions/core";
+import { useBid } from "../db/table";
 
 export interface BidBoxProps {
   hand: Hand;

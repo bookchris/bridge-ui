@@ -1,19 +1,19 @@
 import { Box, Button, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCurrentUser } from "../components/auth";
+import { useErrorHandler } from "react-error-boundary";
+import { useCurrentUser } from "../components/auth/auth";
 import { MiniBoard } from "../components/board";
-import { ErrorAlert } from "../components/errorAlert";
 import {
   useCreateTable,
   useMyTables,
   useMyTournamentTable,
-} from "../lib/table";
+} from "../components/db/table";
 import {
   Tournament,
   useDailyTournament,
   useJoinTournament,
-} from "../lib/tournament";
+} from "../components/db/tournament";
 
 const Home: NextPage = () => {
   const user = useCurrentUser();
@@ -25,30 +25,15 @@ const Home: NextPage = () => {
 };
 
 const Daily = () => {
-  const { data: daily, error, status } = useDailyTournament();
-
-  if (error) {
-    return <ErrorAlert error={error} />;
-  }
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
+  const daily = useDailyTournament();
   if (!daily) {
-    return <div>No daily tournament</div>;
+    return <div>No daily tournament, sorry!</div>;
   }
-  return (
-    <div>
-      <Typography variant="h5" sx={{ py: 1 }}>
-        Daily tournament
-      </Typography>
-      <DailyBoard tournament={daily} />
-    </div>
-  );
+  return <DailyBoard tournament={daily} />;
 };
 
 const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
   const user = useCurrentUser();
-  const router = useRouter();
 
   return (
     <div>
@@ -62,20 +47,10 @@ const DailyBoard = ({ tournament }: { tournament: Tournament }) => {
 
 const MyDailyBoard = ({ tournament }: { tournament: Tournament }) => {
   const router = useRouter();
-  const { data: table, status, error } = useMyTournamentTable(tournament.id);
+  const table = useMyTournamentTable(tournament.id);
   const joinTournament = useJoinTournament();
-
-  if (error) {
-    return <ErrorAlert error={error} />;
-  }
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
   return (
     <div>
-      <Typography variant="h5" sx={{ py: 1 }}>
-        {tournament.name}
-      </Typography>
       {table ? (
         <div>
           <p>You are joined. Click to play this tournament</p>
@@ -103,12 +78,7 @@ const MyTables = () => {
   const user = useCurrentUser();
 
   const { data: tables, error } = useMyTables();
-  if (error) {
-    return <ErrorAlert error={error} />;
-  }
-  if (!tables) {
-    return <div>Loading...</div>;
-  }
+  useErrorHandler(error);
   return (
     <div>
       <Typography variant="h5" sx={{ py: 1 }}>

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
-import { Seat } from "../../functions/core";
-import { usePlay } from "../lib/table";
+import { Seat } from "../../../functions/core";
+import { usePlay } from "../db/table";
 import { useBoardContext } from "./board";
 import { PlayingCard } from "./card";
 

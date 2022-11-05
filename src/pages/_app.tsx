@@ -2,6 +2,7 @@ import {
   AppBar,
   Box,
   Button,
+  CircularProgress,
   CssBaseline,
   Link,
   Menu,
@@ -14,7 +15,8 @@ import { getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import type { AppProps } from "next/app";
 import NextLink from "next/link";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, Suspense, useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   AuthProvider,
   FirebaseAppProvider,
@@ -64,7 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const isSm = useMediaQuery(theme.breakpoints.up("sm"));
   return (
     <SafeHydrate>
-      <FirebaseAppProvider firebaseConfig={firebaseConfig}>
+      <FirebaseAppProvider firebaseConfig={firebaseConfig} suspense={true}>
         <FirebaseSDKProviders>
           <ThemeProvider theme={theme}>
             <title>Bridge</title>
@@ -111,7 +113,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                 mt: { sm: 2 },
               }}
             >
-              <Component {...pageProps} />
+              <ErrorBoundary FallbackComponent={ErrorComponent}>
+                <Suspense fallback={<CircularProgress />}>
+                  <Component {...pageProps} />
+                </Suspense>
+              </ErrorBoundary>
             </Box>
           </ThemeProvider>
         </FirebaseSDKProviders>
@@ -119,6 +125,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     </SafeHydrate>
   );
 }
+
+const ErrorComponent = ({ error }: { error: unknown }) => {
+  const err = error as Error;
+  console.log("error component", error);
+  return (
+    <p>
+      An error has occured: {err?.message || String(error) || "Unknown error"}
+    </p>
+  );
+};
 
 const AnalyizeMenu = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
