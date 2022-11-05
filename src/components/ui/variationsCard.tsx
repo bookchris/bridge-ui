@@ -22,7 +22,7 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
-import { Hand, Seat } from "../../functions/core";
+import { Hand, Seat } from "../../../functions/core";
 import { useBoardContext } from "./board";
 
 export interface VariationsCardProps {

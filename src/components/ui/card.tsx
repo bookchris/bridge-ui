@@ -1,5 +1,5 @@
 import { Box, ButtonBase, ButtonBaseProps, styled } from "@mui/material";
-import { Card } from "../../functions/core";
+import { Card } from "../../../functions/core";
 import { useBoardContext } from "./board";
 import { cardColor } from "./cardText";
 

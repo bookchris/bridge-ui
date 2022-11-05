@@ -8,8 +8,8 @@ import {
 import { Firestore } from "firebase/firestore";
 import { useState } from "react";
 import { useAuth, useFirestore, useSigninCheck } from "reactfire";
-import { writeUser } from "../lib/user";
-import { useCurrentUser } from "./auth";
+import { useCurrentUser } from "../auth/auth";
+import { writeUser } from "../db/user";
 
 export const ProfileButton = () => {
   const { status } = useSigninCheck();
@@ -55,6 +55,18 @@ export const ProfileButton = () => {
           onClick={() => {
             setAnchorEl(undefined);
             signOut(auth);
+            // Hack to clear reactfire cache.
+            // https://github.com/FirebaseExtended/reactfire/discussions/228
+            const reactFirePreloadedObservables = (
+              globalThis as Record<string, unknown>
+            )["_reactFirePreloadedObservables"] as
+              | Map<string, unknown>
+              | undefined;
+            if (reactFirePreloadedObservables) {
+              Array.from(reactFirePreloadedObservables.keys())
+                .filter((key) => key.includes("firestore"))
+                .forEach((key) => reactFirePreloadedObservables.delete(key));
+            }
           }}
         >
           Logout

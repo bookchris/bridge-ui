@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { Hand, Seat } from "../../functions/core";
+import { Hand, Seat } from "../../../functions/core";
 import { useBoardContext } from "./board";
 import { ResultText } from "./resultText";
 

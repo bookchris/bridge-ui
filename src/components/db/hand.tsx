@@ -8,7 +8,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useFirestore, useFirestoreCollectionData } from "reactfire";
-import { Hand, HandJson } from "../../functions/core";
+import { Hand, HandJson } from "../../../functions/core";
 
 const handConverter: FirestoreDataConverter<Hand> = {
   toFirestore(hand: Hand): DocumentData {

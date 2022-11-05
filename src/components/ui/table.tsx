@@ -1,9 +1,9 @@
 import { createContext, useContext, useMemo } from "react";
+import { useErrorHandler } from "react-error-boundary";
 import { Seat, Seats } from "../../functions/core";
-import { Table as LibTable, useTable } from "../lib/table";
-import { useCurrentUser } from "./auth";
+import { useCurrentUser } from "./auth/auth";
 import { Board } from "./board";
-import { ErrorAlert } from "./errorAlert";
+import { Table as LibTable, useTable } from "./db/table";
 
 interface TableContextType {
   tableId?: string;
@@ -18,13 +18,8 @@ export const useTableContext = () => useContext(TableContext);
 
 export function Table({ id }: { id: string }) {
   const { data: table, error } = useTable(id);
-  if (error) {
-    return <ErrorAlert error={error} />;
-  }
-  if (!table) {
-    return <div>Loading...</div>;
-  }
-
+  console.log("useTable", table, error);
+  useErrorHandler(error);
   return <TableContent table={table} />;
 }
 

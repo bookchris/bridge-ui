@@ -1,8 +1,10 @@
 import { useSigninCheck } from "reactfire";
 
 export const useCurrentUser = () => {
-  const { data: signInCheckResult } = useSigninCheck();
-  return signInCheckResult?.user;
+  const { status, data: signInCheckResult } = useSigninCheck();
+  return status === "success" && signInCheckResult.signedIn
+    ? signInCheckResult?.user
+    : undefined;
 };
 
 export const useCurrentUserMust = () => {

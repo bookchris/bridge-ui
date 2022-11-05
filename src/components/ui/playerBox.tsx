@@ -1,8 +1,8 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { Seat } from "../../functions/core";
-import { useSit } from "../lib/table";
-import { useUser } from "../lib/user";
-import { useCurrentUser } from "./auth";
+import { Seat } from "../../../functions/core";
+import { useCurrentUser } from "../auth/auth";
+import { useSit } from "../db/table";
+import { useUser } from "../db/user";
 import { useBoardContext } from "./board";
 import { useTableContext } from "./table";
 
@@ -19,9 +19,8 @@ export function PlayerBox({ seat }: PlayerBoxProps) {
   const index = Object.values(Seat).indexOf(seat);
   const playerId = table?.players?.[index];
   const isRobot = playerId === "Robot";
-  const { data: tableUser } = useUser(playerId || "invalid");
+  const tableUser = useUser(playerId || "invalid");
 
-  //console.log("handAt", handAt, index, handAt.players[index].toString());
   let player = "";
   if (isRobot) {
     player = "Robot";

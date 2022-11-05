@@ -8,7 +8,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { Hand, HandState, Seat } from "../../functions/core";
+import { Hand, HandState, Seat } from "../../../functions/core";
 import { BidBox } from "./bidBox";
 import { BiddingCard } from "./biddingCard";
 import { ContractCard } from "./contractCard";

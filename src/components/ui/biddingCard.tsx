@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ReactNode } from "react";
-import { Hand, Seat } from "../../functions/core";
+import { Hand, Seat } from "../../../functions/core";
 import { BidText } from "./bidText";
 import { useBoardContext } from "./board";
 import { TableRowGrouper } from "./tableRowGrouper";

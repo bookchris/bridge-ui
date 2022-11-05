@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { Bid, Suit } from "../../functions/core";
+import { Bid, Suit } from "../../../functions/core";
 
 export interface BidTextProps {
   bid: Bid;

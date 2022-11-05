@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { Card, Suit } from "../../functions/core";
+import { Card, Suit } from "../../../functions/core";
 
 export interface CardTextProps {
   card: Card;
